@@ -1,0 +1,20 @@
+[build]
+  command = "npm run build"
+  publish = "dist"
+
+[build.environment]
+  # Node 18 doesn't expose a global `crypto`, which the PWA/terser step needs.
+  NODE_VERSION = "20"
+
+# SPA fallback: every route serves the app shell.
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
+
+# The camera API is gated behind Permissions-Policy. Allow this origin to use
+# it; without this, getUserMedia is blocked on some browsers even over HTTPS.
+[[headers]]
+  for = "/*"
+  [headers.values]
+    Permissions-Policy = "camera=(self)"
