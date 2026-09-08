@@ -6,10 +6,16 @@ Built to be used one-handed, in a store, on bad connectivity.
 
 ## Status
 
-**M1 — Camera spike (done).** Opens the rear camera, streams it full-screen, and
-decodes retail barcodes (UPC-A / UPC-E / EAN-13 / EAN-8) continuously with
-`zxing-wasm`, showing the raw digits and detected symbology. All camera failure
-modes are surfaced with distinct on-screen states. No database, no scoring yet.
+- **M1 — Camera spike (done).** Rear camera full-screen, continuous `zxing-wasm`
+  decode of retail barcodes (UPC-A / UPC-E / EAN-13 / EAN-8), raw digits +
+  symbology, every camera failure mode surfaced. Recoverable: pause-on-decode,
+  Scan-again, hung-decode timeout, and a manual keypad fallback.
+- **M2 — Supabase wiring (done).** Typed client from env, schema types, smoke
+  test (`npm run smoke`).
+- **M3 — GTIN lookup (done).** `normaliseToGtin14` (check-digit validated, unit
+  tested) + live query of the `product_risk` view on scan; raw JSON result with
+  explicit not-found / invalid / error states. Offline mirror and the designed
+  HUD come next (M4–M6).
 
 See [`MILESTONES.md`](./MILESTONES.md) for the full build plan and
 [`CLAUDE.md`](./CLAUDE.md) for the stack and non-negotiable invariants.

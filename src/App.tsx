@@ -1,9 +1,8 @@
-import { useMemo, useRef, useState } from "react";
+import { useRef, useState } from "react";
 import { type CameraErrorKind, useCamera } from "@/scanner/useCamera";
 import { useBarcodeScanner } from "@/scanner/useBarcodeScanner";
+import { useProductLookup } from "@/scanner/useProductLookup";
 import ManualEntry from "@/scanner/ManualEntry";
-import { InvalidGtinError, normaliseToGtin14 } from "@/lib/gtin";
-import { type KnownProduct, lookupKnownProduct } from "@/lib/knownProducts";
 
 interface ErrorCopy {
   title: string;
@@ -44,35 +43,12 @@ const ERROR_COPY: Record<CameraErrorKind, ErrorCopy> = {
   },
 };
 
-type Match =
-  | { kind: "recognized"; gtin14: string; product: KnownProduct }
-  | { kind: "unknown"; gtin14: string }
-  | { kind: "invalid"; reason: string };
-
 export default function App() {
   const videoRef = useRef<HTMLVideoElement>(null);
   const camera = useCamera(videoRef);
   const scanner = useBarcodeScanner(videoRef, camera.status === "streaming");
+  const lookup = useProductLookup(scanner.result?.text ?? null);
   const [keypadOpen, setKeypadOpen] = useState(false);
-
-  const match = useMemo<Match | null>(() => {
-    if (!scanner.result) return null;
-    try {
-      const gtin14 = normaliseToGtin14(scanner.result.text);
-      const product = lookupKnownProduct(gtin14);
-      return product
-        ? { kind: "recognized", gtin14, product }
-        : { kind: "unknown", gtin14 };
-    } catch (err) {
-      return {
-        kind: "invalid",
-        reason:
-          err instanceof InvalidGtinError
-            ? err.reason.replace(/-/g, " ")
-            : "unreadable",
-      };
-    }
-  }, [scanner.result]);
 
   const handleManualSubmit = (code: string) => {
     scanner.submitManual(code);
@@ -121,9 +97,7 @@ export default function App() {
       {/* Decoder-wedged error (recoverable) */}
       {scanner.error && camera.status === "streaming" && (
         <div className="absolute inset-0 z-30 flex flex-col items-center justify-center gap-5 bg-[#0b0f0a]/95 px-8 text-center">
-          <h1 className="text-2xl font-bold text-amber-300">
-            Scanner stalled
-          </h1>
+          <h1 className="text-2xl font-bold text-amber-300">Scanner stalled</h1>
           <p className="max-w-sm text-base leading-relaxed text-white/80">
             The barcode decoder stopped responding. Reset it, or enter the code
             by hand.
@@ -180,38 +154,80 @@ export default function App() {
       {/* Bottom HUD */}
       <footer className="absolute inset-x-0 bottom-0 z-10 px-4 pb-[calc(env(safe-area-inset-bottom)+1rem)]">
         {scanner.result ? (
-          <div className="rounded-3xl bg-black/70 p-5 backdrop-blur">
+          <div className="max-h-[70vh] overflow-y-auto rounded-3xl bg-black/70 p-5 backdrop-blur">
             <div className="mb-2 flex items-center gap-2">
               <span className="rounded-full bg-emerald-500 px-3 py-1 text-xs font-bold uppercase tracking-wider text-black">
                 {scanner.result.format}
               </span>
+              {"gtin14" in lookup && (
+                <span className="font-mono text-xs text-white/50">
+                  {lookup.gtin14}
+                </span>
+              )}
             </div>
             <p className="break-all font-mono text-3xl font-bold leading-tight">
               {scanner.result.text}
             </p>
 
-            {/* Match against the local test catalog (real lookup is M2/M3). */}
-            {match?.kind === "recognized" && (
-              <p className="mt-2 text-lg font-semibold text-emerald-300">
-                ✓ {match.product.displayName}
-                {match.product.note && (
-                  <span className="ml-2 text-sm font-normal text-white/50">
-                    {match.product.note}
-                  </span>
-                )}
-              </p>
-            )}
-            {match?.kind === "unknown" && (
-              <p className="mt-2 text-base text-amber-300">
-                Not in local catalog{" "}
-                <span className="text-white/40">({match.gtin14})</span>
-              </p>
-            )}
-            {match?.kind === "invalid" && (
-              <p className="mt-2 text-base text-red-300">
-                Not a valid barcode ({match.reason})
-              </p>
-            )}
+            {/* M3: raw product_risk result rendered as JSON. The designed HUD
+                (two separate score bars, never combined) is M6. */}
+            <div className="mt-3">
+              {lookup.status === "loading" && (
+                <p className="animate-pulse text-base text-white/70">
+                  Looking up…
+                </p>
+              )}
+              {lookup.status === "invalid" && (
+                <p className="text-base text-red-300">
+                  Not a valid barcode ({lookup.reason})
+                </p>
+              )}
+              {lookup.status === "not-found" && (
+                <p className="text-base text-amber-300">
+                  Not in database{" "}
+                  <span className="text-white/40">({lookup.gtin14})</span>
+                </p>
+              )}
+              {lookup.status === "error" && (
+                <p className="text-base text-red-300">
+                  Lookup failed: {lookup.message}
+                </p>
+              )}
+              {lookup.status === "found" && (
+                <div>
+                  <p className="text-lg font-semibold text-emerald-300">
+                    {lookup.row.display_name}
+                  </p>
+                  <p className="text-sm text-white/60">
+                    {lookup.row.commodity_name}
+                    {lookup.row.is_organic ? " · organic" : ""}
+                    {lookup.row.origin_unknown
+                      ? " · origin unknown"
+                      : lookup.row.origin_name
+                        ? ` · ${lookup.row.origin_name}`
+                        : ""}
+                  </p>
+                  {/* Two scores, deliberately separate — never merged. */}
+                  <div className="mt-2 grid grid-cols-2 gap-2 text-sm">
+                    <div className="rounded-xl bg-white/5 p-2">
+                      <div className="text-white/50">Pesticide</div>
+                      <div className="text-2xl font-bold">
+                        {lookup.row.pesticide_score ?? "—"}
+                      </div>
+                    </div>
+                    <div className="rounded-xl bg-white/5 p-2">
+                      <div className="text-white/50">Heavy metal</div>
+                      <div className="text-2xl font-bold">
+                        {lookup.row.heavy_metal_score ?? "—"}
+                      </div>
+                    </div>
+                  </div>
+                  <pre className="mt-3 overflow-x-auto rounded-xl bg-black/50 p-3 text-xs text-white/70">
+                    {JSON.stringify(lookup.row, null, 2)}
+                  </pre>
+                </div>
+              )}
+            </div>
 
             <div className="mt-4 flex gap-3">
               <button
