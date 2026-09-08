@@ -73,9 +73,11 @@ export default function App() {
 
       {/* Top bar */}
       <header className="absolute inset-x-0 top-0 z-10 flex items-center justify-between px-4 pt-[env(safe-area-inset-top)]">
-        <span className="mt-3 rounded-full bg-black/50 px-3 py-1 text-sm font-semibold tracking-wide">
-          Yumbo
-        </span>
+        <img
+          src="/brand/wordmark.png"
+          alt="Yumbo — real food, verified"
+          className="mt-3 h-10 drop-shadow-lg"
+        />
         {camera.status === "streaming" && !scanner.result && !scanner.error && (
           <span className="mt-3 rounded-full bg-black/50 px-3 py-1 text-xs text-white/70">
             {scanner.searching ? "Searching…" : "Ready"}
@@ -92,16 +94,24 @@ export default function App() {
 
       {/* Starting spinner */}
       {camera.status === "starting" && (
-        <div className="absolute inset-0 z-20 flex items-center justify-center bg-black/70">
-          <p className="animate-pulse text-lg text-white/80">
-            Starting camera…
-          </p>
+        <div className="absolute inset-0 z-20 flex flex-col items-center justify-center gap-3 bg-brand-ink/80">
+          <img
+            src="/brand/head-content.png"
+            alt=""
+            className="h-24 w-24 animate-bounce object-contain"
+          />
+          <p className="text-lg text-white/80">Starting camera…</p>
         </div>
       )}
 
       {/* Decoder-wedged error (recoverable) */}
       {scanner.error && camera.status === "streaming" && (
-        <div className="absolute inset-0 z-30 flex flex-col items-center justify-center gap-5 bg-[#0b0f0a]/95 px-8 text-center">
+        <div className="absolute inset-0 z-30 flex flex-col items-center justify-center gap-5 bg-brand-ink/95 px-8 text-center">
+          <img
+            src="/brand/head-confused.png"
+            alt=""
+            className="h-24 w-24 object-contain"
+          />
           <h1 className="text-2xl font-bold text-amber-300">Scanner stalled</h1>
           <p className="max-w-sm text-base leading-relaxed text-white/80">
             The barcode decoder stopped responding. Reset it, or enter the code
@@ -128,7 +138,12 @@ export default function App() {
 
       {/* Camera error screen */}
       {camera.status === "error" && camera.error && (
-        <div className="absolute inset-0 z-30 flex flex-col items-center justify-center gap-5 bg-[#0b0f0a] px-8 text-center">
+        <div className="absolute inset-0 z-30 flex flex-col items-center justify-center gap-5 bg-brand-ink px-8 text-center">
+          <img
+            src="/brand/head-confused.png"
+            alt=""
+            className="h-24 w-24 object-contain"
+          />
           <h1 className="text-2xl font-bold text-red-300">
             {ERROR_COPY[camera.error].title}
           </h1>
@@ -188,17 +203,24 @@ export default function App() {
                 </p>
               )}
               {lookup.status === "not-found" && (
-                <div>
-                  <p className="text-base text-amber-300">
-                    Not in our catalog yet.
-                  </p>
-                  <button
-                    type="button"
-                    onClick={() => setContributeOpen(true)}
-                    className="mt-2 rounded-2xl bg-emerald-500 px-5 py-3 text-base font-semibold text-black active:bg-emerald-400"
-                  >
-                    Search &amp; add it
-                  </button>
+                <div className="flex items-center gap-3">
+                  <img
+                    src="/brand/head-confused.png"
+                    alt=""
+                    className="h-16 w-16 shrink-0 object-contain"
+                  />
+                  <div>
+                    <p className="text-base text-amber-300">
+                      Not in our catalog yet.
+                    </p>
+                    <button
+                      type="button"
+                      onClick={() => setContributeOpen(true)}
+                      className="mt-2 rounded-2xl bg-brand-green px-5 py-3 text-base font-semibold text-white active:opacity-90"
+                    >
+                      Search &amp; add it
+                    </button>
+                  </div>
                 </div>
               )}
               {lookup.status === "error" && (
@@ -208,15 +230,21 @@ export default function App() {
               )}
               {lookup.status === "found" && (
                 <div>
-                  {lookup.row.verified === false && (
-                    <span className="mb-1 inline-block rounded-full bg-amber-500/90 px-2 py-0.5 text-xs font-bold text-black">
-                      Community · unverified
-                    </span>
-                  )}
-                  <p className="text-lg font-semibold text-emerald-300">
-                    {lookup.row.display_name}
-                  </p>
-                  <p className="text-sm text-white/60">
+                  <div className="flex items-start gap-3">
+                    <div className="flex-1">
+                      {lookup.row.verified === false ? (
+                        <span className="mb-1 inline-block rounded-full bg-amber-500/90 px-2 py-0.5 text-xs font-bold text-black">
+                          Community · unverified
+                        </span>
+                      ) : (
+                        <span className="mb-1 inline-block rounded-full bg-brand-green px-2 py-0.5 text-xs font-bold text-white">
+                          ✓ Verified
+                        </span>
+                      )}
+                      <p className="text-lg font-semibold text-emerald-300">
+                        {lookup.row.display_name}
+                      </p>
+                      <p className="text-sm text-white/60">
                     {lookup.row.commodity_name}
                     {lookup.row.is_organic ? " · organic" : ""}
                     {lookup.row.origin_unknown
@@ -224,7 +252,18 @@ export default function App() {
                       : lookup.row.origin_name
                         ? ` · ${lookup.row.origin_name}`
                         : ""}
-                  </p>
+                      </p>
+                    </div>
+                    <img
+                      src={
+                        lookup.row.verified
+                          ? "/brand/mascot-full.png"
+                          : "/brand/head-content.png"
+                      }
+                      alt=""
+                      className="h-20 w-20 shrink-0 object-contain drop-shadow-xl"
+                    />
+                  </div>
                   {/* Two scores, deliberately separate — never merged. */}
                   <div className="mt-2 grid grid-cols-2 gap-2 text-sm">
                     <div className="rounded-xl bg-white/5 p-2">
@@ -268,7 +307,12 @@ export default function App() {
           camera.status === "streaming" &&
           !scanner.error && (
             <div className="flex items-center gap-3">
-              <div className="flex-1 rounded-3xl bg-black/50 p-4 text-center">
+              <div className="flex flex-1 items-center justify-center gap-3 rounded-3xl bg-black/50 p-4 text-center">
+                <img
+                  src="/brand/head-happy.png"
+                  alt=""
+                  className="h-10 w-10 object-contain"
+                />
                 <p className="text-base text-white/70">
                   Point at a barcode to scan
                 </p>

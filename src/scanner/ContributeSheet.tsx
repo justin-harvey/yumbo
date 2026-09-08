@@ -90,7 +90,14 @@ export default function ContributeSheet({
     <div className="absolute inset-0 z-40 flex flex-col justify-end bg-black/80 backdrop-blur">
       <div className="max-h-[90vh] overflow-y-auto rounded-t-3xl bg-[#12180f] p-5 pb-[calc(env(safe-area-inset-bottom)+1rem)]">
         <div className="mb-3 flex items-center justify-between">
-          <h2 className="text-lg font-semibold">Add to catalog</h2>
+          <h2 className="flex items-center gap-2 text-lg font-semibold">
+            <img
+              src="/brand/head-happy.png"
+              alt=""
+              className="h-8 w-8 object-contain"
+            />
+            Add to catalog
+          </h2>
           <button
             type="button"
             onClick={onClose}

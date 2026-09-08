@@ -21,8 +21,8 @@ export default defineConfig({
         short_name: "Yumbo",
         description:
           "Scan a grocery barcode and see pesticide and heavy-metal risk.",
-        theme_color: "#0b0f0a",
-        background_color: "#0b0f0a",
+        theme_color: "#166534",
+        background_color: "#0e1712",
         display: "standalone",
         orientation: "portrait",
         icons: [

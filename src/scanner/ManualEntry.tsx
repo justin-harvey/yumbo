@@ -54,7 +54,14 @@ export default function ManualEntry({ onSubmit, onClose }: ManualEntryProps) {
     <div className="absolute inset-0 z-40 flex flex-col justify-end bg-black/80 backdrop-blur">
       <div className="rounded-t-3xl bg-[#12180f] p-5 pb-[calc(env(safe-area-inset-bottom)+1rem)]">
         <div className="mb-3 flex items-center justify-between">
-          <h2 className="text-lg font-semibold">Enter a barcode</h2>
+          <h2 className="flex items-center gap-2 text-lg font-semibold">
+            <img
+              src="/brand/head-content.png"
+              alt=""
+              className="h-8 w-8 object-contain"
+            />
+            Enter a barcode
+          </h2>
           <button
             type="button"
             onClick={onClose}
