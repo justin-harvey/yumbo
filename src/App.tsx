@@ -5,6 +5,7 @@ import { useProductLookup } from "@/scanner/useProductLookup";
 import { useReferenceData } from "@/scanner/useReferenceData";
 import ManualEntry from "@/scanner/ManualEntry";
 import ContributeSheet from "@/scanner/ContributeSheet";
+import RiskHud from "@/scanner/RiskHud";
 
 interface ErrorCopy {
   title: string;
@@ -185,12 +186,12 @@ export default function App() {
                 </span>
               )}
             </div>
-            <p className="break-all font-mono text-3xl font-bold leading-tight">
-              {scanner.result.text}
-            </p>
+            {lookup.status !== "found" && (
+              <p className="break-all font-mono text-3xl font-bold leading-tight">
+                {scanner.result.text}
+              </p>
+            )}
 
-            {/* M3: raw product_risk result rendered as JSON. The designed HUD
-                (two separate score bars, never combined) is M6. */}
             <div className="mt-3">
               {lookup.status === "loading" && (
                 <p className="animate-pulse text-base text-white/70">
@@ -228,62 +229,7 @@ export default function App() {
                   Lookup failed: {lookup.message}
                 </p>
               )}
-              {lookup.status === "found" && (
-                <div>
-                  <div className="flex items-start gap-3">
-                    <div className="flex-1">
-                      {lookup.row.verified === false ? (
-                        <span className="mb-1 inline-block rounded-full bg-amber-500/90 px-2 py-0.5 text-xs font-bold text-black">
-                          Community · unverified
-                        </span>
-                      ) : (
-                        <span className="mb-1 inline-block rounded-full bg-brand-green px-2 py-0.5 text-xs font-bold text-white">
-                          ✓ Verified
-                        </span>
-                      )}
-                      <p className="text-lg font-semibold text-emerald-300">
-                        {lookup.row.display_name}
-                      </p>
-                      <p className="text-sm text-white/60">
-                    {lookup.row.commodity_name}
-                    {lookup.row.is_organic ? " · organic" : ""}
-                    {lookup.row.origin_unknown
-                      ? " · origin unknown"
-                      : lookup.row.origin_name
-                        ? ` · ${lookup.row.origin_name}`
-                        : ""}
-                      </p>
-                    </div>
-                    <img
-                      src={
-                        lookup.row.verified
-                          ? "/brand/mascot-full.png"
-                          : "/brand/head-content.png"
-                      }
-                      alt=""
-                      className="h-20 w-20 shrink-0 object-contain drop-shadow-xl"
-                    />
-                  </div>
-                  {/* Two scores, deliberately separate — never merged. */}
-                  <div className="mt-2 grid grid-cols-2 gap-2 text-sm">
-                    <div className="rounded-xl bg-white/5 p-2">
-                      <div className="text-white/50">Pesticide</div>
-                      <div className="text-2xl font-bold">
-                        {lookup.row.pesticide_score ?? "—"}
-                      </div>
-                    </div>
-                    <div className="rounded-xl bg-white/5 p-2">
-                      <div className="text-white/50">Heavy metal</div>
-                      <div className="text-2xl font-bold">
-                        {lookup.row.heavy_metal_score ?? "—"}
-                      </div>
-                    </div>
-                  </div>
-                  <pre className="mt-3 overflow-x-auto rounded-xl bg-black/50 p-3 text-xs text-white/70">
-                    {JSON.stringify(lookup.row, null, 2)}
-                  </pre>
-                </div>
-              )}
+              {lookup.status === "found" && <RiskHud row={lookup.row} />}
             </div>
 
             <div className="mt-4 flex gap-3">
@@ -307,6 +253,20 @@ export default function App() {
           camera.status === "streaming" &&
           !scanner.error && (
             <div className="flex items-center gap-3">
+              {camera.torch.supported && (
+                <button
+                  type="button"
+                  onClick={camera.torch.toggle}
+                  aria-label="Toggle flashlight"
+                  className={`flex h-14 w-14 shrink-0 items-center justify-center rounded-full text-2xl active:opacity-70 ${
+                    camera.torch.on
+                      ? "bg-amber-300 text-black"
+                      : "bg-white/10 text-white"
+                  }`}
+                >
+                  🔦
+                </button>
+              )}
               <div className="flex flex-1 items-center justify-center gap-3 rounded-3xl bg-black/50 p-4 text-center">
                 <img
                   src="/brand/head-happy.png"

@@ -1,4 +1,21 @@
-import { type RefObject, useCallback, useEffect, useState } from "react";
+import {
+  type RefObject,
+  useCallback,
+  useEffect,
+  useRef,
+  useState,
+} from "react";
+
+// `torch` is a real MediaTrack capability/constraint on Chrome/Android but is
+// not in the TS DOM lib yet.
+type TorchCapabilities = MediaTrackCapabilities & { torch?: boolean };
+type TorchConstraintSet = MediaTrackConstraintSet & { torch?: boolean };
+
+export interface TorchControl {
+  supported: boolean;
+  on: boolean;
+  toggle: () => void;
+}
 
 /**
  * The distinct failure modes a store user can hit. Each one needs its own
@@ -19,6 +36,7 @@ export interface CameraState {
   status: CameraStatus;
   error: CameraErrorKind | null;
   retry: () => void;
+  torch: TorchControl;
 }
 
 function classifyError(err: unknown): CameraErrorKind {
@@ -49,8 +67,23 @@ export function useCamera(videoRef: RefObject<HTMLVideoElement>): CameraState {
   const [status, setStatus] = useState<CameraStatus>("idle");
   const [error, setError] = useState<CameraErrorKind | null>(null);
   const [attempt, setAttempt] = useState(0);
+  const [torchSupported, setTorchSupported] = useState(false);
+  const [torchOn, setTorchOn] = useState(false);
+  const trackRef = useRef<MediaStreamTrack | null>(null);
 
   const retry = useCallback(() => setAttempt((n) => n + 1), []);
+
+  const toggleTorch = useCallback(() => {
+    const track = trackRef.current;
+    if (!track) return;
+    const next = !torchOn;
+    void track
+      .applyConstraints({ advanced: [{ torch: next } as TorchConstraintSet] })
+      .then(() => setTorchOn(next))
+      .catch(() => {
+        // Some devices reject torch while focusing; leave the state unchanged.
+      });
+  }, [torchOn]);
 
   useEffect(() => {
     let stream: MediaStream | null = null;
@@ -120,6 +153,14 @@ export function useCamera(videoRef: RefObject<HTMLVideoElement>): CameraState {
           // stream is still attached and iOS resumes it on the first paint.
         }
       }
+
+      // Torch is Chrome/Android only — feature-detect and hide otherwise.
+      const track = stream.getVideoTracks()[0] ?? null;
+      trackRef.current = track;
+      const caps = track?.getCapabilities?.() as TorchCapabilities | undefined;
+      setTorchSupported(!!caps?.torch);
+      setTorchOn(false);
+
       setStatus("streaming");
     }
 
@@ -128,10 +169,18 @@ export function useCamera(videoRef: RefObject<HTMLVideoElement>): CameraState {
     return () => {
       cancelled = true;
       stream?.getTracks().forEach((t) => t.stop());
+      trackRef.current = null;
+      setTorchSupported(false);
+      setTorchOn(false);
       const video = videoRef.current;
       if (video) video.srcObject = null;
     };
   }, [videoRef, attempt]);
 
-  return { status, error, retry };
+  return {
+    status,
+    error,
+    retry,
+    torch: { supported: torchSupported, on: torchOn, toggle: toggleTorch },
+  };
 }

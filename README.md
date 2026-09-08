@@ -22,8 +22,11 @@ Built to be used one-handed, in a store, on bad connectivity.
   `verified: false`. The app reads the unified `catalog_risk` view. Writes use
   Supabase Anonymous Sign-in. Requires enabling anonymous sign-ins in the
   project's Auth settings.
+- **M6 — designed HUD (done).** Product identity + two independent risk scores
+  as separate colored bars (never combined), inferred/unknown origin surfaced,
+  haptic on decode, torch toggle (feature-detected), Yumbo mascot reactions.
 - **Deferred:** offline mirror (Dexie) is intentionally last; until then every
-  scan needs connectivity. The designed HUD is M6.
+  scan needs connectivity.
 
 See [`MILESTONES.md`](./MILESTONES.md) for the full build plan and
 [`CLAUDE.md`](./CLAUDE.md) for the stack and non-negotiable invariants.
