@@ -2,7 +2,9 @@ import { useRef, useState } from "react";
 import { type CameraErrorKind, useCamera } from "@/scanner/useCamera";
 import { useBarcodeScanner } from "@/scanner/useBarcodeScanner";
 import { useProductLookup } from "@/scanner/useProductLookup";
+import { useReferenceData } from "@/scanner/useReferenceData";
 import ManualEntry from "@/scanner/ManualEntry";
+import ContributeSheet from "@/scanner/ContributeSheet";
 
 interface ErrorCopy {
   title: string;
@@ -47,8 +49,11 @@ export default function App() {
   const videoRef = useRef<HTMLVideoElement>(null);
   const camera = useCamera(videoRef);
   const scanner = useBarcodeScanner(videoRef, camera.status === "streaming");
-  const lookup = useProductLookup(scanner.result?.text ?? null);
   const [keypadOpen, setKeypadOpen] = useState(false);
+  const [contributeOpen, setContributeOpen] = useState(false);
+  const [refreshToken, setRefreshToken] = useState(0);
+  const lookup = useProductLookup(scanner.result?.text ?? null, refreshToken);
+  const reference = useReferenceData(contributeOpen);
 
   const handleManualSubmit = (code: string) => {
     scanner.submitManual(code);
@@ -183,10 +188,18 @@ export default function App() {
                 </p>
               )}
               {lookup.status === "not-found" && (
-                <p className="text-base text-amber-300">
-                  Not in database{" "}
-                  <span className="text-white/40">({lookup.gtin14})</span>
-                </p>
+                <div>
+                  <p className="text-base text-amber-300">
+                    Not in our catalog yet.
+                  </p>
+                  <button
+                    type="button"
+                    onClick={() => setContributeOpen(true)}
+                    className="mt-2 rounded-2xl bg-emerald-500 px-5 py-3 text-base font-semibold text-black active:bg-emerald-400"
+                  >
+                    Search &amp; add it
+                  </button>
+                </div>
               )}
               {lookup.status === "error" && (
                 <p className="text-base text-red-300">
@@ -195,6 +208,11 @@ export default function App() {
               )}
               {lookup.status === "found" && (
                 <div>
+                  {lookup.row.verified === false && (
+                    <span className="mb-1 inline-block rounded-full bg-amber-500/90 px-2 py-0.5 text-xs font-bold text-black">
+                      Community · unverified
+                    </span>
+                  )}
                   <p className="text-lg font-semibold text-emerald-300">
                     {lookup.row.display_name}
                   </p>
@@ -271,6 +289,21 @@ export default function App() {
         <ManualEntry
           onSubmit={handleManualSubmit}
           onClose={() => setKeypadOpen(false)}
+        />
+      )}
+
+      {contributeOpen && "gtin14" in lookup && (
+        <ContributeSheet
+          gtin14={lookup.gtin14}
+          rawText={scanner.result?.text ?? ""}
+          commodities={reference.commodities}
+          origins={reference.origins}
+          referenceLoading={reference.loading}
+          onClose={() => setContributeOpen(false)}
+          onSubmitted={() => {
+            setContributeOpen(false);
+            setRefreshToken((n) => n + 1);
+          }}
         />
       )}
     </div>

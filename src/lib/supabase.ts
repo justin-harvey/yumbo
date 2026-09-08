@@ -14,8 +14,10 @@ if (!url || !anonKey) {
   );
 }
 
-// No auth session persistence: reference data is world-readable via RLS and the
-// scanner has no login. The anon key in the bundle is expected.
+// Reads are world-readable via RLS. Writes (community submissions) require an
+// identity, so we keep the anonymous-sign-in session around across reloads to
+// give each device a stable contributor id. The anon key in the bundle is
+// expected; RLS is the security boundary.
 export const supabase = createClient<Database>(url, anonKey, {
-  auth: { persistSession: false, autoRefreshToken: false },
+  auth: { persistSession: true, autoRefreshToken: true },
 });

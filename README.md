@@ -13,9 +13,17 @@ Built to be used one-handed, in a store, on bad connectivity.
 - **M2 — Supabase wiring (done).** Typed client from env, schema types, smoke
   test (`npm run smoke`).
 - **M3 — GTIN lookup (done).** `normaliseToGtin14` (check-digit validated, unit
-  tested) + live query of the `product_risk` view on scan; raw JSON result with
-  explicit not-found / invalid / error states. Offline mirror and the designed
-  HUD come next (M4–M6).
+  tested) + live query on scan; raw JSON result with explicit not-found /
+  invalid / error states.
+- **Community submissions (done).** Unknown barcode → enrich from Open Food
+  Facts → map to a commodity → submit. Contributions land in a separate
+  `product_submissions` table (never the curated `products`), are scored through
+  the same SQL functions, and surface to everyone immediately flagged
+  `verified: false`. The app reads the unified `catalog_risk` view. Writes use
+  Supabase Anonymous Sign-in. Requires enabling anonymous sign-ins in the
+  project's Auth settings.
+- **Deferred:** offline mirror (Dexie) is intentionally last; until then every
+  scan needs connectivity. The designed HUD is M6.
 
 See [`MILESTONES.md`](./MILESTONES.md) for the full build plan and
 [`CLAUDE.md`](./CLAUDE.md) for the stack and non-negotiable invariants.

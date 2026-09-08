@@ -317,6 +317,48 @@ export type Database = {
         };
         Relationships: [];
       };
+      product_submissions: {
+        Row: {
+          id: string;
+          gtin: string;
+          display_name: string;
+          commodity_id: string;
+          brand_name: string | null;
+          is_organic: boolean;
+          origin_id: string | null;
+          off_data: Json | null;
+          status: Database["public"]["Enums"]["submission_status"];
+          submitted_by: string;
+          created_at: string;
+        };
+        Insert: {
+          id?: string;
+          gtin: string;
+          display_name: string;
+          commodity_id: string;
+          brand_name?: string | null;
+          is_organic?: boolean;
+          origin_id?: string | null;
+          off_data?: Json | null;
+          status?: Database["public"]["Enums"]["submission_status"];
+          submitted_by?: string;
+          created_at?: string;
+        };
+        Update: {
+          id?: string;
+          gtin?: string;
+          display_name?: string;
+          commodity_id?: string;
+          brand_name?: string | null;
+          is_organic?: boolean;
+          origin_id?: string | null;
+          off_data?: Json | null;
+          status?: Database["public"]["Enums"]["submission_status"];
+          submitted_by?: string;
+          created_at?: string;
+        };
+        Relationships: [];
+      };
     };
     Views: {
       product_risk: {
@@ -336,6 +378,28 @@ export type Database = {
           pesticide_score: number | null;
           heavy_metal_score: number | null;
           origin_unknown: boolean | null;
+        };
+        Relationships: [];
+      };
+      catalog_risk: {
+        Row: {
+          source: string | null;
+          verified: boolean | null;
+          submission_id: string | null;
+          product_id: string | null;
+          gtin: string | null;
+          display_name: string | null;
+          brand_name: string | null;
+          commodity_name: string | null;
+          category: string | null;
+          form: string | null;
+          is_organic: boolean | null;
+          origin_name: string | null;
+          origin_confidence: string | null;
+          pesticide_score: number | null;
+          heavy_metal_score: number | null;
+          origin_unknown: boolean | null;
+          created_at: string | null;
         };
         Relationships: [];
       };
@@ -364,6 +428,7 @@ export type Database = {
         | "pathogen"
         | "organic_fraud"
         | "import_refusal";
+      submission_status: "pending" | "approved" | "rejected";
     };
     CompositeTypes: Record<never, never>;
   };
@@ -374,3 +439,4 @@ export type Commodity = Database["public"]["Tables"]["commodities"]["Row"];
 export type Origin = Database["public"]["Tables"]["origins"]["Row"];
 export type PluCode = Database["public"]["Tables"]["plu_codes"]["Row"];
 export type ProductRisk = Database["public"]["Views"]["product_risk"]["Row"];
+export type CatalogRisk = Database["public"]["Views"]["catalog_risk"]["Row"];

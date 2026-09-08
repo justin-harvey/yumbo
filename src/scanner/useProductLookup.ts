@@ -1,22 +1,26 @@
 import { useEffect, useState } from "react";
 import { supabase } from "@/lib/supabase";
 import { InvalidGtinError, normaliseToGtin14 } from "@/lib/gtin";
-import type { ProductRisk } from "@/lib/database.types";
+import type { CatalogRisk } from "@/lib/database.types";
 
 export type LookupState =
   | { status: "idle" }
   | { status: "invalid"; reason: string }
   | { status: "loading"; gtin14: string }
-  | { status: "found"; gtin14: string; row: ProductRisk }
+  | { status: "found"; gtin14: string; row: CatalogRisk }
   | { status: "not-found"; gtin14: string }
   | { status: "error"; gtin14: string; message: string };
 
 /**
  * Normalises a raw scanned/entered code to GTIN-14 and looks it up in the
- * `product_risk` view. M3 queries the network directly; the offline mirror is
- * M4, so a lookup here needs connectivity.
+ * `catalog_risk` view (curated products + community submissions, one best row
+ * per GTIN). `refreshToken` forces a re-query for the same code — used after a
+ * submission so the new community row shows immediately.
  */
-export function useProductLookup(text: string | null): LookupState {
+export function useProductLookup(
+  text: string | null,
+  refreshToken = 0,
+): LookupState {
   const [state, setState] = useState<LookupState>({ status: "idle" });
 
   useEffect(() => {
@@ -44,7 +48,7 @@ export function useProductLookup(text: string | null): LookupState {
 
     void (async () => {
       const { data, error } = await supabase
-        .from("product_risk")
+        .from("catalog_risk")
         .select("*")
         .eq("gtin", gtin14)
         .maybeSingle();
@@ -62,7 +66,7 @@ export function useProductLookup(text: string | null): LookupState {
     return () => {
       cancelled = true;
     };
-  }, [text]);
+  }, [text, refreshToken]);
 
   return state;
 }
