@@ -25,6 +25,9 @@ Built to be used one-handed, in a store, on bad connectivity.
 - **M6 — designed HUD (done).** Product identity + two independent risk scores
   as separate colored bars (never combined), inferred/unknown origin surfaced,
   haptic on decode, torch toggle (feature-detected), Yumbo mascot reactions.
+- **M7 — compare tray (done).** Hold up to 3 items (persisted across reloads);
+  compare-mode scans append; side-by-side view aligns both scores and marks the
+  lower-risk pick per score independently, saying so when they disagree.
 - **Deferred:** offline mirror (Dexie) is intentionally last; until then every
   scan needs connectivity.
 

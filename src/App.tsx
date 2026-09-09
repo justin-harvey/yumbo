@@ -1,4 +1,4 @@
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { type CameraErrorKind, useCamera } from "@/scanner/useCamera";
 import { useBarcodeScanner } from "@/scanner/useBarcodeScanner";
 import { useProductLookup } from "@/scanner/useProductLookup";
@@ -6,6 +6,8 @@ import { useReferenceData } from "@/scanner/useReferenceData";
 import ManualEntry from "@/scanner/ManualEntry";
 import ContributeSheet from "@/scanner/ContributeSheet";
 import RiskHud from "@/scanner/RiskHud";
+import CompareSheet from "@/scanner/CompareSheet";
+import { useCompareTray } from "@/scanner/useCompareTray";
 
 interface ErrorCopy {
   title: string;
@@ -55,6 +57,18 @@ export default function App() {
   const [refreshToken, setRefreshToken] = useState(0);
   const lookup = useProductLookup(scanner.result?.text ?? null, refreshToken);
   const reference = useReferenceData(contributeOpen);
+  const tray = useCompareTray();
+  const [compareMode, setCompareMode] = useState(false);
+  const [compareOpen, setCompareOpen] = useState(false);
+
+  // In compare mode a found item is appended to the tray and scanning resumes,
+  // so successive scans accumulate rather than replace one another.
+  useEffect(() => {
+    if (!compareMode || lookup.status !== "found") return;
+    if (tray.full && !tray.has(lookup.gtin14)) return; // leave result + "full" note
+    tray.add(lookup.row);
+    scanner.reset();
+  }, [compareMode, lookup]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const handleManualSubmit = (code: string) => {
     scanner.submitManual(code);
@@ -174,6 +188,52 @@ export default function App() {
 
       {/* Bottom HUD */}
       <footer className="absolute inset-x-0 bottom-0 z-10 px-4 pb-[calc(env(safe-area-inset-bottom)+1rem)]">
+        {/* Compare tray bar */}
+        {(compareMode || tray.items.length > 0) &&
+          camera.status !== "error" && (
+            <div className="mb-3 flex items-center gap-2 rounded-2xl bg-black/70 p-2 backdrop-blur">
+              <span className="shrink-0 px-1 text-sm font-semibold">
+                Compare {tray.items.length}/3
+              </span>
+              <div className="flex flex-1 gap-1 overflow-x-auto">
+                {tray.items.map((it) => (
+                  <button
+                    key={it.gtin}
+                    type="button"
+                    onClick={() => tray.remove(it.gtin)}
+                    className="shrink-0 rounded-full bg-white/10 px-2 py-1 text-xs"
+                  >
+                    {it.commodity_name ?? it.display_name} ✕
+                  </button>
+                ))}
+                {tray.items.length === 0 && (
+                  <span className="px-1 text-xs text-white/40">
+                    scan items to add…
+                  </span>
+                )}
+              </div>
+              <button
+                type="button"
+                disabled={tray.items.length < 2}
+                onClick={() => setCompareOpen(true)}
+                className="shrink-0 rounded-full bg-brand-green px-3 py-1.5 text-sm font-semibold text-white disabled:opacity-40"
+              >
+                View
+              </button>
+              <button
+                type="button"
+                aria-label="Exit compare"
+                onClick={() => {
+                  tray.clear();
+                  setCompareMode(false);
+                }}
+                className="shrink-0 rounded-full bg-white/10 px-2.5 py-1.5 text-xs"
+              >
+                ✕
+              </button>
+            </div>
+          )}
+
         {scanner.result ? (
           <div className="max-h-[70vh] overflow-y-auto rounded-3xl bg-black/70 p-5 backdrop-blur">
             <div className="mb-2 flex items-center gap-2">
@@ -230,6 +290,14 @@ export default function App() {
                 </p>
               )}
               {lookup.status === "found" && <RiskHud row={lookup.row} />}
+              {compareMode &&
+                lookup.status === "found" &&
+                tray.full &&
+                !tray.has(lookup.gtin14) && (
+                  <p className="mt-2 text-sm text-amber-300">
+                    Compare is full (3/3). View or clear it to add more.
+                  </p>
+                )}
             </div>
 
             <div className="mt-4 flex gap-3">
@@ -240,6 +308,17 @@ export default function App() {
               >
                 Scan again
               </button>
+              {lookup.status === "found" &&
+                !tray.has(lookup.gtin14) &&
+                !tray.full && (
+                  <button
+                    type="button"
+                    onClick={() => tray.add(lookup.row)}
+                    className="rounded-2xl bg-white/10 px-4 py-4 text-lg font-semibold active:opacity-70"
+                  >
+                    ＋ Compare
+                  </button>
+                )}
               <button
                 type="button"
                 onClick={() => setKeypadOpen(true)}
@@ -279,6 +358,16 @@ export default function App() {
               </div>
               <button
                 type="button"
+                onClick={() => setCompareMode((m) => !m)}
+                aria-label="Toggle compare mode"
+                className={`shrink-0 rounded-3xl px-4 py-4 text-2xl active:opacity-70 ${
+                  compareMode ? "bg-brand-green text-white" : "bg-white/10"
+                }`}
+              >
+                ⚖️
+              </button>
+              <button
+                type="button"
                 onClick={() => setKeypadOpen(true)}
                 className="rounded-3xl bg-white/10 px-5 py-4 text-base font-semibold active:opacity-70"
               >
@@ -288,6 +377,23 @@ export default function App() {
           )
         )}
       </footer>
+
+      {compareOpen && (
+        <CompareSheet
+          items={tray.items}
+          onRemove={tray.remove}
+          onClear={() => {
+            tray.clear();
+            setCompareOpen(false);
+          }}
+          onClose={() => setCompareOpen(false)}
+          onScanMore={() => {
+            setCompareOpen(false);
+            setCompareMode(true);
+            scanner.reset();
+          }}
+        />
+      )}
 
       {keypadOpen && (
         <ManualEntry
