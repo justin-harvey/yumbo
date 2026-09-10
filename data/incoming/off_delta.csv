@@ -1,0 +1,7 @@
+gtin,display_name,brand,chain,commodity_slug,form,is_organic,origin_country_code,origin_raw,mapping_source,mapping_confidence,needs_review,review_reasons,off_code,off_url
+05010251850595,Raspberries,Morrisons Market Street,,raspberry,fresh,false,,,name,low,true,community-entry-unreviewed; missing-origin,5010251850595,https://world.openfoodfacts.org/product/5010251850595
+08003170104006,LAMPONI,CONAD,,raspberry,fresh,false,,,name,low,true,community-entry-unreviewed; missing-origin,8003170104006,https://world.openfoodfacts.org/product/8003170104006
+05063334025724,British Raspberries,Sainsbury's,,raspberry,fresh,false,,,name,low,true,community-entry-unreviewed; missing-origin,5063334025724,https://world.openfoodfacts.org/product/5063334025724
+00804879133438,Baby spinach,Uncle vinny's,,spinach,fresh,false,,,name,low,true,community-entry-unreviewed; missing-origin,0804879133438,https://world.openfoodfacts.org/product/0804879133438
+00070475656279,"Crimini, Shitake, & Oyster Mushrooms","Giorgio, Wild Bunch",,mushroom,fresh,false,,,name,low,true,community-entry-unreviewed; missing-origin,0070475656279,https://world.openfoodfacts.org/product/0070475656279
+00628938000109,Organic Grape Tomatoes,Gen V,,grape,fresh,true,CA,en:canada,name,low,true,community-entry-unreviewed,0628938000109,https://world.openfoodfacts.org/product/0628938000109

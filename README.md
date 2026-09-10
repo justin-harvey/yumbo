@@ -67,6 +67,11 @@ re-runnable migrations in `supabase/migrations/`. See
   CSV into an insert migration. Never writes the DB directly.
 - **Brand + mascot (done).** Yumbo raccoon-chef throughout, plus a persistent
   YumboBuddy helper (blink/wink, heart-eyes on tap, rotating produce tips).
+- **Automated data refresh (done).** A weekly GitHub Actions workflow polls the
+  openFDA food-recall API and Open Food Facts for newly added produce, then opens
+  a PR with the regenerated, reviewable artifacts — external sources have no
+  webhooks, so it polls, and it never writes the database directly. FDA recalls
+  are display-only and never feed scoring. See [`HANDOFF.md`](./HANDOFF.md) §9b.
 - **Deferred:** offline mirror (Dexie) is intentionally last; until then every
   scan needs connectivity.
 

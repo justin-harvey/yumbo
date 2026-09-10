@@ -14,7 +14,9 @@
     "import-sql": "node scripts/csv-to-sql.mjs",
     "gen-commodities": "node scripts/gen-commodities.mjs",
     "ingest-plu": "node scripts/ingest-plu.mjs",
-    "plu-sql": "node scripts/plu-csv-to-sql.mjs"
+    "plu-sql": "node scripts/plu-csv-to-sql.mjs",
+    "fetch-recalls": "node scripts/fetch-recalls.mjs",
+    "ingest-off-delta": "node scripts/ingest-off-delta.mjs"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.116.0",

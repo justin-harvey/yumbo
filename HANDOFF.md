@@ -133,6 +133,8 @@ npm run import-sql     # M9: reviewed CSV -> scripts/out/import_*.sql (paste it)
 npm run gen-commodities# commodity expansion -> proposed_commodities.csv + migration
 npm run ingest-plu     # IFPS PLU list -> proposed_plu.csv + unmatched_plu.csv
 npm run plu-sql        # reviewed proposed_plu.csv -> seed_plu_codes.sql (paste it)
+npm run fetch-recalls  # openFDA recalls -> data/incoming/recalls.csv + supabase/seed/recalls.sql
+npm run ingest-off-delta # new OFF produce -> data/incoming/off_delta.csv (feeds import-sql)
 node scripts/make-icons.mjs   # regenerate PWA icons from the mascot head
 node scripts/crop.mjs ...     # slice regions from yumbo branding.png
 ```
@@ -210,6 +212,32 @@ reviewable CSV first (like M9) so a human signs off before the migration.
 **IFPS PLU** list to the (now larger) commodity set into a reviewable CSV, then a
 csv→SQL step into `plu_codes` (only for commodities that exist). `plu_risk`
 already scores them. Do not hand-type PLU→commodity mappings.
+
+## 9b. Automated data refresh (CI)
+
+`.github/workflows/refresh-data.yml` runs weekly (Mon 06:00 UTC) + manual
+dispatch. External sources have no webhooks, so it **polls** and opens a PR on
+branch `automated/data-refresh` — it never writes Supabase directly.
+
+- **FDA recalls** — `scripts/fetch-recalls.mjs` polls the openFDA
+  food-enforcement API, keeps only genuine contamination recalls of actual
+  produce (two gates: reason must be microbial/chemical, product must not be a
+  processed food), maps them to commodities via `scripts/recall-map.data.mjs`,
+  and writes `data/incoming/recalls.csv` + an **idempotent** `supabase/seed/
+  recalls.sql` (NOT EXISTS guard). Recalls land in `contamination_findings` and
+  are **display-only — they never feed scoring** (invariant #4). The
+  `contamination_findings` display UI is still unbuilt; this fills the table.
+  Optional `OPENFDA_API_KEY` secret raises the rate limit.
+- **OFF new produce** — `scripts/ingest-off-delta.mjs` pulls recently-created
+  OFF fresh produce (the feasible stand-in for the impossible "OFF webhooks"),
+  maps via the 67-commodity keyword map, and writes `data/incoming/off_delta.csv`
+  (same schema as M9; every row `needs_review`). Import with
+  `npm run import-sql -- --in data/incoming/off_delta.csv`.
+- **EWG** is annual + copyrighted + blocks bots — not automatable. Re-check the
+  Dirty Dozen / Clean Fifteen by hand each spring and bump `commodities.data.mjs`.
+
+`data/incoming/` and `supabase/seed/` are **tracked** (not gitignored like
+`scripts/out/`) so the automated PR can carry them for review.
 
 ## 10. Milestone status
 
