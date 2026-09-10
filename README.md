@@ -6,6 +6,34 @@ one-handed, in a store, on bad connectivity.
 
 Live: https://yumbo.netlify.app · Repo: https://github.com/justin-harvey/yumbo
 
+## What's in the catalog
+
+Yumbo scores produce two ways — barcoded packages (by GTIN) and loose produce
+(by PLU) — off a curated, **sourced** database:
+
+| | Count |
+|---|--:|
+| Produce commodities (the scoring backbone) | **67** |
+| PLU codes for loose produce | **1,812** |
+| — distinct commodities those PLUs cover | 67 |
+| Country-level origins (risk multipliers) | 8 |
+
+The PLU set is **907 conventional IFPS codes** — about **92% of every mappable
+code in the International Federation for Produce Standards list** — plus their
+organic (9-prefixed) twins. Every commodity tier is **sourced, never guessed**:
+pesticide tiers from the [EWG 2024 Shopper's Guide](https://www.ewg.org/foodnews/)
+(Dirty Dozen / Clean Fifteen), heavy-metal tiers from the FDA Total Diet Study,
+Consumer Reports, and Healthy Babies Bright Futures. Names with no defensible
+tier (fresh herbs, tree nuts, exotic tropicals) are deliberately left out rather
+than faked.
+
+It's fully reproducible: commodity tiers live in
+[`scripts/commodities.data.mjs`](./scripts/commodities.data.mjs), the IFPS
+name→commodity rules in
+[`scripts/plu-map.data.mjs`](./scripts/plu-map.data.mjs), and both feed
+re-runnable migrations in `supabase/migrations/`. See
+[`HANDOFF.md`](./HANDOFF.md) §9 for the pipeline.
+
 ## Status
 
 - **M1 — Camera spike (done).** Rear camera full-screen, continuous `zxing-wasm`
@@ -31,8 +59,9 @@ Live: https://yumbo.netlify.app · Repo: https://github.com/justin-harvey/yumbo
   compare-mode scans append; side-by-side view aligns both scores and marks the
   lower-risk pick per score independently, saying so when they disagree.
 - **M8 — PLU entry (done).** Loose-produce keypad (4–5 digits), organic derived
-  from a 9-prefixed code, scored via the `plu_risk` view. Only banana PLUs are
-  seeded; a full IFPS import is gated on expanding commodities (see HANDOFF.md).
+  from a 9-prefixed code, scored via the `plu_risk` view. Backed by a full IFPS
+  import — **1,812 PLU codes** across 67 commodities (see *What's in the catalog*
+  above).
 - **M9 — Open Food Facts ingest (done).** `npm run ingest` pulls leading Maine
   chains' produce into a reviewable CSV; `npm run import-sql` turns the reviewed
   CSV into an insert migration. Never writes the DB directly.
@@ -50,10 +79,10 @@ task.
 
 Risk tiers are **1 (low) … 5 (high)**. The two scores are always kept separate.
 `organic mit.` is how much organic certification reduces the *pesticide* score
-only (0–1); it never touches heavy metals (soil-derived). These 14 are seeded
-values drawn from Consumer Reports (2024) pesticide analysis and As You Sow /
-USDA PDP / peer-reviewed accumulation data; they are pending a fully sourced
-expansion (see [`HANDOFF.md`](./HANDOFF.md)).
+only (0–1); it never touches heavy metals (soil-derived). The 14 originals are
+shown below; the expansion adds **53 more (67 total)** with the same discipline.
+The full sourced list with citations is in
+[`scripts/commodities.data.mjs`](./scripts/commodities.data.mjs).
 
 | Commodity | Category | Pesticide tier | Heavy-metal tier | Organic mit. |
 |---|---|:--:|:--:|:--:|
