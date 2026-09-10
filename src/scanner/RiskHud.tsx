@@ -89,7 +89,7 @@ export default function RiskHud({ row }: { row: CatalogRisk }) {
         <img
           src={mascot}
           alt=""
-          className="h-24 w-24 shrink-0 object-contain drop-shadow-xl"
+          className="animate-yumbo-found h-24 w-24 shrink-0 object-contain drop-shadow-xl"
         />
       </div>
 

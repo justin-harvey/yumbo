@@ -297,9 +297,9 @@ export default function App() {
               {lookup.status === "not-found" && (
                 <div className="flex items-center gap-3">
                   <img
-                    src="/brand/head-confused.png"
+                    src="/brand/mascot-standing.png"
                     alt=""
-                    className="h-16 w-16 shrink-0 object-contain"
+                    className="animate-yumbo-shrug h-20 w-20 shrink-0 object-contain"
                   />
                   <div>
                     <p className="text-base text-amber-300">
