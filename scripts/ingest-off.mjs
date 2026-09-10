@@ -80,7 +80,7 @@ const EXCLUDE_RE =
 // Kept names are simple ("Cut Green Beans", "Whole Strawberries"); processed
 // ones carry extra nouns. Also drops dried legumes that aren't our garden pea.
 const EXCLUDE_NAME_RE =
-  /cake|yogurt|waffle|pancake|powder|popper|blend|smoothie|soda|\bbar\b|oatmeal|protein|peanut butter|chip|cookie|muffin|bread|sauce|dressing|ice cream|\bpie\b|\bjam\b|syrup|cereal|chocolate|candy|drink|fries|tots?|tater|split peas?|black.?eyed?|yelloweye|lentil|chick.?pea|hummus|crisp/i;
+  /cake|yogurt|waffle|pancake|powder|popper|blend|smoothie|soda|\bbar\b|oatmeal|protein|peanut butter|chip|cookie|muffin|bread|sauce|dressing|ice cream|\bpie\b|\bjam\b|syrup|cereal|chocolate|candy|drink|fries|tots?|tater|split peas?|black.?eyed?|yelloweye|lentil|chick.?pea|hummus|crisp|baby food|\bwraps?\b|tortilla|pur[eé]e|pouch|quinoa|chia/i;
 
 // Ordered name fallbacks (low confidence). Order matters: sweet potato first.
 const NAME_KEYWORDS = [
