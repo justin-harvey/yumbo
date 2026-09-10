@@ -6,6 +6,31 @@ one-handed, in a store, on bad connectivity.
 
 Live: https://yumbo.netlify.app · Repo: https://github.com/justin-harvey/yumbo
 
+## The data keeps itself fresh 🔄
+
+Most risk-scanner apps ship a one-time data dump that rots the day it's built.
+Yumbo doesn't. A **scheduled GitHub Actions pipeline runs every week**, polls
+public food-safety sources, and opens a **pull request** with whatever changed —
+so the catalog stays current with no one re-keying data, and **nothing reaches
+the database unreviewed**. (External datasets don't offer webhooks, so it polls;
+recall data is display-only and never moves a score.)
+
+- **FDA recall watch** — pulls the [openFDA food-enforcement API](https://open.fda.gov/apis/food/enforcement/),
+  keeps only genuine contamination recalls of *actual produce* (two precision
+  gates: the reason must be microbial/chemical — Listeria, Salmonella, E. coli,
+  Cyclospora, pesticide, heavy metal — and the item must not be a processed
+  food), and maps each to its commodity.
+- **New-produce intake** — watches Open Food Facts for **newly added produce**
+  worldwide and proposes it into the catalog, mapped through the same
+  67-commodity engine (the feasible stand-in for "live webhooks," which OFF
+  doesn't provide).
+- **Human in the loop** — every run lands as a reviewable diff you approve before
+  the SQL is pasted. Freshness *and* discipline, not one at the expense of the
+  other.
+
+Run it on demand from **Actions → "Refresh produce data" → Run workflow**, or let
+the Monday cron do it. See [`HANDOFF.md`](./HANDOFF.md) §9b for the internals.
+
 ## What's in the catalog
 
 Yumbo scores produce two ways — barcoded packages (by GTIN) and loose produce
