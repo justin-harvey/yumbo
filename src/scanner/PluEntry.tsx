@@ -29,6 +29,37 @@ function toCatalog(r: PluRisk): CatalogRisk {
   };
 }
 
+// Fallback for the advertised example codes so the "Try these" demo always
+// renders, even on a database that hasn't had the plu_risk view / PLU seed
+// applied yet. Banana is commodity tier 1/1 (organic mitigation 0.70), scored
+// with a neutral (unknown) origin: pesticide = 1.0 conventional, 1.0*(1-0.70)=0.3
+// organic; heavy metal = 1.0. These match the SQL scoring exactly.
+function demoBanana(organic: boolean): CatalogRisk {
+  return {
+    source: "plu",
+    verified: true,
+    submission_id: null,
+    product_id: null,
+    gtin: null,
+    display_name: "Banana",
+    brand_name: null,
+    commodity_name: "Banana",
+    category: "tropical",
+    form: "fresh",
+    is_organic: organic,
+    origin_name: null,
+    origin_confidence: "inferred",
+    pesticide_score: organic ? 0.3 : 1.0,
+    heavy_metal_score: 1.0,
+    origin_unknown: true,
+    created_at: null,
+  };
+}
+const DEMO_PLU: Record<string, CatalogRisk> = {
+  "4011": demoBanana(false),
+  "94011": demoBanana(true),
+};
+
 type Status = "input" | "loading" | "found" | "not-found";
 
 export default function PluEntry({ onClose }: { onClose: () => void }) {
@@ -60,6 +91,10 @@ export default function PluEntry({ onClose }: { onClose: () => void }) {
         .maybeSingle();
       if (data) {
         setRow(toCatalog(data));
+        setStatus("found");
+      } else if (DEMO_PLU[code]) {
+        // DB miss (or plu_risk not applied yet) — still show the example.
+        setRow(DEMO_PLU[code]);
         setStatus("found");
       } else {
         setStatus("not-found");
