@@ -15,7 +15,7 @@ function reasonMessage(err: InvalidGtinError): string {
     case "bad-length":
       return "A UPC/EAN is 8, 12, 13, or 14 digits.";
     case "bad-check-digit":
-      return "That code's check digit doesn't add up — re-check it.";
+      return "That code's check digit doesn't add up, re-check it.";
   }
 }
 

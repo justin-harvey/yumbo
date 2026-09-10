@@ -135,7 +135,7 @@ export default function ContributeSheet({
           </div>
         ) : (
           <p className="mb-4 text-sm text-white/50">
-            Not on Open Food Facts — fill it in by hand.
+            Not on Open Food Facts, fill it in by hand.
           </p>
         )}
 

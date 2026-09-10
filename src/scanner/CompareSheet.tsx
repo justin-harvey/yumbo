@@ -118,7 +118,7 @@ export default function CompareSheet({
   } else {
     const p = pBest ? `${shortName(pBest)} is lowest in pesticide` : "pesticide is a tie";
     const h = hBest ? `${shortName(hBest)} is lowest in heavy metal` : "heavy metal is a tie";
-    summary = `No single winner — ${p}; ${h}.`;
+    summary = `No single winner. ${p}; ${h}.`;
   }
 
   // Grid: a label column + one column per item.
@@ -173,7 +173,7 @@ export default function CompareSheet({
         </div>
         <p className="mt-2 text-center text-xs text-white/40">
           🏆 marks the lower-risk item for each score. The two are judged
-          independently — a pick can win one and lose the other.
+          independently. A pick can win one and lose the other.
         </p>
       </div>
 

@@ -87,7 +87,7 @@ export default function YumboBuddy({ mood }: { mood: BuddyMood }) {
       <button
         type="button"
         onClick={onTap}
-        aria-label="Yumbo helper — tap for a tip"
+        aria-label="Yumbo helper, tap for a tip"
         className="pointer-events-auto shrink-0 active:scale-95"
       >
         <img

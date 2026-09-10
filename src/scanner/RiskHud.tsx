@@ -113,7 +113,7 @@ export default function RiskHud({ row }: { row: CatalogRisk }) {
 
       {row.origin_unknown && (
         <p className="mt-2 text-xs text-white/40">
-          Origin unknown — scored with a neutral origin, so confidence is lower.
+          Origin unknown, scored with a neutral origin, so confidence is lower.
         </p>
       )}
 
@@ -123,7 +123,7 @@ export default function RiskHud({ row }: { row: CatalogRisk }) {
         <ScoreBar label="Heavy metal" score={row.heavy_metal_score} />
       </div>
       <p className="mt-2 text-xs text-white/40">
-        Two separate scores. Buying organic lowers pesticide risk only — never
+        Two separate scores. Buying organic lowers pesticide risk only, never
         heavy metals.
       </p>
     </div>

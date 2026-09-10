@@ -7,6 +7,7 @@ import ManualEntry from "@/scanner/ManualEntry";
 import PluEntry from "@/scanner/PluEntry";
 import ContributeSheet from "@/scanner/ContributeSheet";
 import RiskHud from "@/scanner/RiskHud";
+import { BarcodeIcon, CompareIcon, LeafIcon, TorchIcon } from "@/scanner/Icons";
 import CompareSheet from "@/scanner/CompareSheet";
 import { useCompareTray } from "@/scanner/useCompareTray";
 import YumboBuddy, { type BuddyMood } from "@/scanner/YumboBuddy";
@@ -107,11 +108,19 @@ export default function App() {
 
       {/* Top bar */}
       <header className="absolute inset-x-0 top-0 z-10 flex items-center justify-between px-4 pt-[env(safe-area-inset-top)]">
-        <img
-          src="/brand/wordmark.png"
-          alt="Yumbo — real food, verified"
-          className="mt-3 h-10 drop-shadow-lg"
-        />
+        <a
+          href="https://github.com/justin-harvey/yumbo"
+          target="_blank"
+          rel="noopener noreferrer"
+          aria-label="Yumbo on GitHub"
+          className="mt-3 active:opacity-70"
+        >
+          <img
+            src="/brand/wordmark.png"
+            alt="Yumbo, real food, verified"
+            className="h-10 drop-shadow-lg"
+          />
+        </a>
         {camera.status === "streaming" && !scanner.result && !scanner.error && (
           <span className="mt-3 rounded-full bg-black/50 px-3 py-1 text-xs text-white/70">
             {scanner.searching ? "Searching…" : "Ready"}
@@ -359,50 +368,47 @@ export default function App() {
                   type="button"
                   onClick={camera.torch.toggle}
                   aria-label="Toggle flashlight"
-                  className={`flex h-14 w-14 shrink-0 items-center justify-center rounded-full text-2xl active:opacity-70 ${
+                  className={`flex h-14 w-14 shrink-0 items-center justify-center rounded-full active:opacity-70 ${
                     camera.torch.on
                       ? "bg-amber-300 text-black"
                       : "bg-white/10 text-white"
                   }`}
                 >
-                  🔦
+                  <TorchIcon className="h-7 w-7" />
                 </button>
               )}
-              <div className="flex flex-1 items-center justify-center gap-3 rounded-3xl bg-black/50 p-3 text-center">
+              <div className="flex flex-1 items-center justify-center">
                 <img
                   src="/brand/mascot-research.png"
-                  alt=""
-                  className="h-14 w-14 object-contain"
+                  alt="Scanning for a barcode"
+                  className="h-20 w-20 object-contain drop-shadow-lg"
                 />
-                <p className="text-base text-white/70">
-                  Point at a barcode — I'm looking…
-                </p>
               </div>
               <button
                 type="button"
                 onClick={() => setCompareMode((m) => !m)}
                 aria-label="Toggle compare mode"
-                className={`shrink-0 rounded-3xl px-4 py-4 text-2xl active:opacity-70 ${
-                  compareMode ? "bg-brand-green text-white" : "bg-white/10"
+                className={`flex h-14 w-14 shrink-0 items-center justify-center rounded-full active:opacity-70 ${
+                  compareMode ? "bg-brand-green text-white" : "bg-white/10 text-white"
                 }`}
               >
-                ⚖️
+                <CompareIcon className="h-7 w-7" />
               </button>
               <button
                 type="button"
                 onClick={() => setPluOpen(true)}
                 aria-label="Enter a PLU for loose produce"
-                className="shrink-0 rounded-3xl bg-white/10 px-4 py-4 text-2xl active:opacity-70"
+                className="flex h-14 w-14 shrink-0 items-center justify-center rounded-full bg-white/10 text-white active:opacity-70"
               >
-                🍎
+                <LeafIcon className="h-7 w-7" />
               </button>
               <button
                 type="button"
                 onClick={() => setKeypadOpen(true)}
-                className="shrink-0 rounded-3xl bg-white/10 px-4 py-4 text-2xl active:opacity-70"
                 aria-label="Enter a barcode"
+                className="flex h-14 w-14 shrink-0 items-center justify-center rounded-full bg-white/10 text-white active:opacity-70"
               >
-                ⌨️
+                <BarcodeIcon className="h-7 w-7" />
               </button>
             </div>
           )
