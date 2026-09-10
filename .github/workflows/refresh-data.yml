@@ -1,0 +1,81 @@
+name: Refresh produce data
+
+# Keeps Yumbo's data fresh by POLLING public sources on a schedule (external
+# datasets don't push webhooks) and opening a PR with the regenerated, reviewable
+# artifacts. Nothing is written to Supabase directly — a human reviews the diff
+# and pastes the SQL, preserving the health-data review discipline.
+
+on:
+  schedule:
+    - cron: "0 6 * * 1" # Mondays 06:00 UTC
+  workflow_dispatch:
+    inputs:
+      recall_since_days:
+        description: "openFDA recall lookback window (days)"
+        default: "540"
+      off_since_days:
+        description: "Open Food Facts new-product window (days)"
+        default: "14"
+
+permissions:
+  contents: write
+  pull-requests: write
+
+concurrency:
+  group: refresh-data
+  cancel-in-progress: false
+
+jobs:
+  refresh:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: "npm"
+
+      - run: npm ci
+
+      # openFDA food recalls -> data/incoming/recalls.csv + supabase/seed/recalls.sql
+      - name: Fetch FDA recalls
+        continue-on-error: true
+        env:
+          OPENFDA_API_KEY: ${{ secrets.OPENFDA_API_KEY }} # optional; raises rate limit
+        run: node scripts/fetch-recalls.mjs --since-days "${{ github.event.inputs.recall_since_days || '540' }}"
+
+      # Open Food Facts new produce -> data/incoming/off_delta.csv (reviewable)
+      - name: Ingest new OFF produce
+        continue-on-error: true
+        run: node scripts/ingest-off-delta.mjs --since-days "${{ github.event.inputs.off_since_days || '14' }}" --pages 3
+
+      # NB: commodity/PLU migrations are intentionally NOT regenerated here — the
+      # generators mint a new timestamped filename each run, so doing it on a
+      # schedule would churn the migration chain. Regenerate those locally when a
+      # data module actually changes (npm run gen-commodities / ingest-plu / plu-sql).
+
+      - name: Open / update review PR
+        uses: peter-evans/create-pull-request@v6
+        with:
+          branch: automated/data-refresh
+          base: main
+          add-paths: |
+            data/incoming/**
+            supabase/seed/**
+          commit-message: "chore(data): scheduled refresh (recalls + OFF produce)"
+          title: "Data refresh: FDA recalls + new OFF produce"
+          body: |
+            Automated weekly data refresh (polling, since external sources have no webhooks).
+
+            **Review before merging + pasting SQL:**
+            - `data/incoming/recalls.csv` — FDA contamination recalls mapped to commodities.
+              Display-only; never feeds scoring. Seed: `supabase/seed/recalls.sql` (idempotent).
+            - `data/incoming/off_delta.csv` — newly created OFF produce. All rows are
+              `needs_review`; import with `npm run import-sql -- --in data/incoming/off_delta.csv`.
+
+            Sanity-check the mappings, then paste the reviewed SQL into the Supabase SQL Editor.
+          labels: |
+            data
+            automated
+          delete-branch: false
