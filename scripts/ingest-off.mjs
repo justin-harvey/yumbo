@@ -74,13 +74,15 @@ CATEGORY_TO_SLUG.set("en:squash", "winter_squash");
 // produce" — a scanned strawberry SODA or carrot CAKE must never be scored as
 // produce. If any of these appear, the product is skipped entirely.
 const EXCLUDE_RE =
-  /beverages|sodas|soft-drinks|energy-drinks|waters|yogurts|dairies|milks|cheeses|creams|desserts|ice-cream|frozen-desserts|cakes|pastries|biscuits|cookies|snacks|crackers|chips|sauces|condiments|dressings|spices|seasonings|waffles|pancakes|cereals|candies|confectioneries|chocolates|jams|marmalades|syrups|smoothies|granolas?|breads|pasta|pizzas|prepared-meals|soups|dips|hummus/;
+  /beverages|sodas|soft-drinks|energy-drinks|waters|yogurts|dairies|milks|cheeses|creams|desserts|ice-cream|frozen-desserts|cakes|pastries|biscuits|cookies|snacks|crackers|chips|sauces|condiments|dressings|spices|seasonings|waffles|pancakes|cereals|candies|confectioneries|chocolates|jams|jellies|marmalades|preserves|compotes|spreads|nut-butters|seed-butters|syrups|smoothies|granolas?|breads|pasta|pizzas|prepared-meals|soups|dips|hummus/;
 
 // Some OFF entries have no categories, so also reject obviously-processed names.
 // Kept names are simple ("Cut Green Beans", "Whole Strawberries"); processed
 // ones carry extra nouns. Also drops dried legumes that aren't our garden pea.
+// \bbutters?\b is safe: it won't match "butternut" (no word boundary after
+// "butter" there), but does catch "apple/almond/peanut butter".
 const EXCLUDE_NAME_RE =
-  /cake|yogurt|waffle|pancake|powder|popper|blend|smoothie|soda|\bbar\b|oatmeal|protein|peanut butter|chip|cookie|muffin|bread|sauce|dressing|ice cream|\bpie\b|\bjam\b|syrup|cereal|chocolate|candy|drink|fries|tots?|tater|split peas?|black.?eyed?|yelloweye|lentil|chick.?pea|hummus|crisp|baby food|\bwraps?\b|tortilla|pur[eé]e|pouch|quinoa|chia/i;
+  /cake|yogurt|waffle|pancake|powder|popper|blend|smoothie|soda|\bbar\b|oatmeal|protein|\bbutters?\b|chip|cookie|muffin|bread|sauce|dressing|ice cream|\bpie\b|\bjam\b|jelly|marmalade|preserves?|compote|spread|syrup|cereal|chocolate|candy|drink|fries|tots?|tater|split peas?|black.?eyed?|yelloweye|lentil|chick.?pea|hummus|crisp|baby food|\bwraps?\b|tortilla|pur[eé]e|pouch|quinoa|chia/i;
 
 // Ordered name fallbacks (low confidence). Order matters: sweet potato first.
 const NAME_KEYWORDS = [
