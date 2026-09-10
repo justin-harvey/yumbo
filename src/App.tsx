@@ -8,6 +8,7 @@ import ContributeSheet from "@/scanner/ContributeSheet";
 import RiskHud from "@/scanner/RiskHud";
 import CompareSheet from "@/scanner/CompareSheet";
 import { useCompareTray } from "@/scanner/useCompareTray";
+import YumboBuddy, { type BuddyMood } from "@/scanner/YumboBuddy";
 
 interface ErrorCopy {
   title: string;
@@ -75,6 +76,22 @@ export default function App() {
     setKeypadOpen(false);
   };
 
+  // The helper mascot's mood follows the app: it researches while you scan,
+  // cheers a clean pick, and looks concerned at a high score.
+  const found = lookup.status === "found" ? lookup.row : null;
+  const worst = found
+    ? Math.max(found.pesticide_score ?? 0, found.heavy_metal_score ?? 0)
+    : 0;
+  const buddyMood: BuddyMood = found
+    ? worst < 1.5
+      ? "good"
+      : worst >= 4
+        ? "concern"
+        : "idle"
+    : scanner.error
+      ? "concern"
+      : "searching";
+
   return (
     <div className="fixed inset-0 overflow-hidden bg-black text-white">
       {/* Camera feed. Always mounted so the ref is available before play(). */}
@@ -109,15 +126,18 @@ export default function App() {
 
       {/* Starting spinner */}
       {camera.status === "starting" && (
-        <div className="absolute inset-0 z-20 flex flex-col items-center justify-center gap-3 bg-brand-ink/80">
+        <div className="absolute inset-0 z-20 flex flex-col items-center justify-center gap-4 bg-brand-ink">
           <img
-            src="/brand/head-content.png"
-            alt=""
-            className="h-24 w-24 animate-bounce object-contain"
+            src="/brand/main-logo.png"
+            alt="Yumbo"
+            className="w-56 max-w-[70vw] animate-pulse object-contain"
           />
-          <p className="text-lg text-white/80">Starting camera…</p>
+          <p className="text-lg text-white/70">Starting camera…</p>
         </div>
       )}
+
+      {/* Persistent mascot helper (hidden behind full-screen sheets) */}
+      {camera.status === "streaming" && <YumboBuddy mood={buddyMood} />}
 
       {/* Decoder-wedged error (recoverable) */}
       {scanner.error && camera.status === "streaming" && (
@@ -346,14 +366,14 @@ export default function App() {
                   🔦
                 </button>
               )}
-              <div className="flex flex-1 items-center justify-center gap-3 rounded-3xl bg-black/50 p-4 text-center">
+              <div className="flex flex-1 items-center justify-center gap-3 rounded-3xl bg-black/50 p-3 text-center">
                 <img
-                  src="/brand/head-happy.png"
+                  src="/brand/mascot-research.png"
                   alt=""
-                  className="h-10 w-10 object-contain"
+                  className="h-14 w-14 object-contain"
                 />
                 <p className="text-base text-white/70">
-                  Point at a barcode to scan
+                  Point at a barcode — I'm looking…
                 </p>
               </div>
               <button

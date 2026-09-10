@@ -54,6 +54,18 @@ function Chip({
 export default function RiskHud({ row }: { row: CatalogRisk }) {
   const verified = row.verified === true;
 
+  // Mascot reacts to the worse of the two scores: thumbs-up when it's a clean
+  // pick, worried when it's high, neutral otherwise.
+  const worst = Math.max(row.pesticide_score ?? 0, row.heavy_metal_score ?? 0);
+  const mascot =
+    worst < 1.5
+      ? "/brand/mascot-thumbs-up.png"
+      : worst >= 4
+        ? "/brand/head-confused.png"
+        : verified
+          ? "/brand/mascot-full.png"
+          : "/brand/head-content.png";
+
   return (
     <div>
       <div className="flex items-start gap-3">
@@ -75,9 +87,9 @@ export default function RiskHud({ row }: { row: CatalogRisk }) {
           )}
         </div>
         <img
-          src={verified ? "/brand/mascot-full.png" : "/brand/head-content.png"}
+          src={mascot}
           alt=""
-          className="h-20 w-20 shrink-0 object-contain drop-shadow-xl"
+          className="h-24 w-24 shrink-0 object-contain drop-shadow-xl"
         />
       </div>
 
