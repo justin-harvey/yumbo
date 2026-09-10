@@ -9,7 +9,8 @@
     "preview": "vite preview",
     "typecheck": "tsc -b --noEmit",
     "test": "vitest run",
-    "smoke": "node scripts/smoke.mjs"
+    "smoke": "node scripts/smoke.mjs",
+    "ingest": "node scripts/ingest-off.mjs"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.116.0",
