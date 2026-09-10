@@ -65,13 +65,19 @@ Editor (user is free-tier; chose dashboard paste over CLI/Branching). No Docker
 locally, so no `supabase start`. Forgetting to paste a migration has bitten us
 twice (blank app / empty results).
 
-Migrations in `supabase/migrations/`, all currently **applied**:
+Migrations in `supabase/migrations/`. The first four are **applied**; the last
+two are **generated and pending paste** (see §9):
 1. `20260823000000_init_produce_risk.sql` — schema, `product_risk` view, scoring
    functions, RLS, seed 13 commodities + 8 origins.
 2. `20260824000000_seed_test_products.sql` — banana commodity + 3 test products.
 3. `20260825000000_product_submissions.sql` — `product_submissions` table + RLS +
    `catalog_risk` view (curated ∪ community).
 4. `20260826000000_plu_risk_and_seed.sql` — `plu_risk` view + banana PLUs.
+5. `20260910122841_expand_commodities.sql` — **PENDING** — +53 commodities with
+   sourced tiers (EWG 2024 / FDA / CR). Regenerate with `npm run gen-commodities`.
+6. `20260910124427_seed_plu_codes.sql` — **PENDING** — 1,812 PLU codes (907
+   conventional IFPS + organic 9-twins). Paste AFTER #5. Regenerate with
+   `npm run ingest-plu && npm run plu-sql`.
 
 Also required: **Authentication → Anonymous sign-ins = ON** (for community
 submissions).
@@ -124,6 +130,9 @@ npm test               # vitest (gtin tests)
 npm run smoke          # REST count of commodities (sanity-check env/DB)
 npm run ingest         # M9: OFF -> scripts/out/proposed_products_*.csv
 npm run import-sql     # M9: reviewed CSV -> scripts/out/import_*.sql (paste it)
+npm run gen-commodities# commodity expansion -> proposed_commodities.csv + migration
+npm run ingest-plu     # IFPS PLU list -> proposed_plu.csv + unmatched_plu.csv
+npm run plu-sql        # reviewed proposed_plu.csv -> seed_plu_codes.sql (paste it)
 node scripts/make-icons.mjs   # regenerate PWA icons from the mascot head
 node scripts/crop.mjs ...     # slice regions from yumbo branding.png
 ```
@@ -139,7 +148,27 @@ node scripts/crop.mjs ...     # slice regions from yumbo branding.png
 - **Brand assets** belong in `public/brand/`, not `dist/brand` (dist is wiped).
 - **PAT** must be fine-grained with Contents:write and must never be committed.
 
-## 9. TASK — Commodity expansion (do this next)
+## 9. TASK — Commodity + PLU expansion
+
+> **STATUS (done, pending paste):** both halves are built as generated
+> migrations. The data pipeline lives in `scripts/` and is driven off two
+> reviewable CSVs in `scripts/out/`:
+> - `proposed_commodities.csv` (53 rows) → `20260910122841_expand_commodities.sql`
+> - `proposed_plu.csv` (907 rows) → `20260910124427_seed_plu_codes.sql` (1,812
+>   codes with organic twins); `unmatched_plu.csv` (94 rows) is the audit trail
+>   of names with no defensible commodity (herbs, tree nuts, exotic tropicals) —
+>   deliberately NOT force-fit, per the health-data discipline.
+> - IFPS source list bundled at `scripts/data/ifps_plu.csv` (public domain).
+> - Keyword→slug rules in `scripts/plu-map.data.mjs`; commodity tiers +
+>   citations in `scripts/commodities.data.mjs`. PLU coverage is ~92% of
+>   mappable codes.
+>
+> **Remaining for a human:** review the two CSVs, then paste #5 then #6 into the
+> Supabase SQL Editor (order matters). To widen coverage, add commodities in
+> `commodities.data.mjs` (with sources) and/or rules in `plu-map.data.mjs`, then
+> re-run `npm run gen-commodities && npm run ingest-plu && npm run plu-sql`.
+
+Original spec retained below for context.
 
 **Why:** only 14 commodities exist. This caps both barcode coverage (a scanned
 product can't score without its commodity) and PLU coverage (a PLU can't map to
@@ -186,8 +215,9 @@ already scores them. Do not hand-type PLU→commodity mappings.
 
 Done: M1 (camera), M2 (Supabase), M3 (GTIN lookup), M6 (HUD), M7 (compare),
 M8 (PLU entry — mechanism only, banana seeded), M9 (OFF ingest + importer),
-community submissions, full branding + mascot helper.
+community submissions, full branding + mascot helper, **commodity expansion +
+IFPS PLU import** (§9 — migrations generated, pending paste).
 
-Not done: **commodity expansion** (§9), **IFPS PLU import**, M4 (offline mirror /
-Dexie — deferred to last), M5 (TS scoring parity test — only meaningful once
-offline scoring exists), curator review UI, sub-national origins, recalls.
+Not done: paste migrations #5/#6, M4 (offline mirror / Dexie — deferred to last),
+M5 (TS scoring parity test — only meaningful once offline scoring exists),
+curator review UI, sub-national origins, recalls.

@@ -11,7 +11,10 @@
     "test": "vitest run",
     "smoke": "node scripts/smoke.mjs",
     "ingest": "node scripts/ingest-off.mjs",
-    "import-sql": "node scripts/csv-to-sql.mjs"
+    "import-sql": "node scripts/csv-to-sql.mjs",
+    "gen-commodities": "node scripts/gen-commodities.mjs",
+    "ingest-plu": "node scripts/ingest-plu.mjs",
+    "plu-sql": "node scripts/plu-csv-to-sql.mjs"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.116.0",
