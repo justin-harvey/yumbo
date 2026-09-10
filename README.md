@@ -1,8 +1,10 @@
 # Yumbo — Produce Risk Scanner
 
 A mobile-first PWA. Point your phone camera at a grocery product, decode its
-barcode, and (in later milestones) see pesticide and heavy-metal risk scores.
-Built to be used one-handed, in a store, on bad connectivity.
+barcode, and see pesticide and heavy-metal risk scores. Built to be used
+one-handed, in a store, on bad connectivity.
+
+Live: https://yumbo.netlify.app · Repo: https://github.com/justin-harvey/yumbo
 
 ## Status
 
@@ -28,11 +30,51 @@ Built to be used one-handed, in a store, on bad connectivity.
 - **M7 — compare tray (done).** Hold up to 3 items (persisted across reloads);
   compare-mode scans append; side-by-side view aligns both scores and marks the
   lower-risk pick per score independently, saying so when they disagree.
+- **M8 — PLU entry (done).** Loose-produce keypad (4–5 digits), organic derived
+  from a 9-prefixed code, scored via the `plu_risk` view. Only banana PLUs are
+  seeded; a full IFPS import is gated on expanding commodities (see HANDOFF.md).
+- **M9 — Open Food Facts ingest (done).** `npm run ingest` pulls leading Maine
+  chains' produce into a reviewable CSV; `npm run import-sql` turns the reviewed
+  CSV into an insert migration. Never writes the DB directly.
+- **Brand + mascot (done).** Yumbo raccoon-chef throughout, plus a persistent
+  YumboBuddy helper (blink/wink, heart-eyes on tap, rotating produce tips).
 - **Deferred:** offline mirror (Dexie) is intentionally last; until then every
   scan needs connectivity.
 
-See [`MILESTONES.md`](./MILESTONES.md) for the full build plan and
-[`CLAUDE.md`](./CLAUDE.md) for the stack and non-negotiable invariants.
+See [`MILESTONES.md`](./MILESTONES.md) for the full build plan,
+[`CLAUDE.md`](./CLAUDE.md) for the stack and non-negotiable invariants, and
+[`HANDOFF.md`](./HANDOFF.md) for the full project state + the commodity-expansion
+task.
+
+## Commodity reference (current scoring tiers)
+
+Risk tiers are **1 (low) … 5 (high)**. The two scores are always kept separate.
+`organic mit.` is how much organic certification reduces the *pesticide* score
+only (0–1); it never touches heavy metals (soil-derived). These 14 are seeded
+values drawn from Consumer Reports (2024) pesticide analysis and As You Sow /
+USDA PDP / peer-reviewed accumulation data; they are pending a fully sourced
+expansion (see [`HANDOFF.md`](./HANDOFF.md)).
+
+| Commodity | Category | Pesticide tier | Heavy-metal tier | Organic mit. |
+|---|---|:--:|:--:|:--:|
+| Banana | tropical | 1 | 1 | 0.70 |
+| Bell pepper | fruiting | 5 | 2 | 0.85 |
+| Blueberry | berry | 5 | 2 | 0.85 |
+| Broccoli | brassica | 2 | 2 | 0.70 |
+| Carrot | root | 2 | 4 | 0.70 |
+| Green bean | legume | 5 | 2 | 0.85 |
+| Kale | leafy_green | 4 | 4 | 0.75 |
+| Pea | legume | 1 | 2 | 0.70 |
+| Peach | stone_fruit | 4 | 2 | 0.85 |
+| Potato | root | 3 | 4 | 0.75 |
+| Spinach | leafy_green | 3 | 5 | 0.75 |
+| Strawberry | berry | 5 | 2 | 0.85 |
+| Sweet potato | root | 2 | 4 | 0.70 |
+| Winter squash | gourd | 2 | 2 | 0.70 |
+
+Origins add a multiplier (country-level today): US 1.00, MX 1.40 pesticide,
+CN 1.30 pesticide / 1.50 heavy-metal, etc. See the init migration for the full
+set and provenance notes.
 
 ## Develop
 
@@ -52,10 +94,12 @@ npm run preview   # serve the production build locally
 
 ## Deploy (Netlify)
 
-`netlify.toml` sets the build command, SPA fallback, and a
+`netlify.toml` sets the build command, SPA fallback, Node 20, and a
 `Permissions-Policy: camera=(self)` header (required for `getUserMedia` on some
-browsers even over HTTPS). Point Netlify at this repo; no env vars needed for
-M1.
+browsers even over HTTPS). Point Netlify at this repo and set the two build-time
+env vars `VITE_SUPABASE_URL` and `VITE_SUPABASE_ANON_KEY` (they are inlined at
+build, so **redeploy after changing them**). Without them the app throws on load
+and white-screens — see [`HANDOFF.md`](./HANDOFF.md).
 
 ## Stack
 
