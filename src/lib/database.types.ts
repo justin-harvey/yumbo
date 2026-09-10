@@ -381,6 +381,18 @@ export type Database = {
         };
         Relationships: [];
       };
+      plu_risk: {
+        Row: {
+          code: string | null;
+          display_name: string | null;
+          commodity_name: string | null;
+          category: string | null;
+          is_organic: boolean | null;
+          pesticide_score: number | null;
+          heavy_metal_score: number | null;
+        };
+        Relationships: [];
+      };
       catalog_risk: {
         Row: {
           source: string | null;
@@ -440,3 +452,4 @@ export type Origin = Database["public"]["Tables"]["origins"]["Row"];
 export type PluCode = Database["public"]["Tables"]["plu_codes"]["Row"];
 export type ProductRisk = Database["public"]["Views"]["product_risk"]["Row"];
 export type CatalogRisk = Database["public"]["Views"]["catalog_risk"]["Row"];
+export type PluRisk = Database["public"]["Views"]["plu_risk"]["Row"];

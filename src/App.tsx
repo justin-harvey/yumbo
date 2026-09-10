@@ -4,6 +4,7 @@ import { useBarcodeScanner } from "@/scanner/useBarcodeScanner";
 import { useProductLookup } from "@/scanner/useProductLookup";
 import { useReferenceData } from "@/scanner/useReferenceData";
 import ManualEntry from "@/scanner/ManualEntry";
+import PluEntry from "@/scanner/PluEntry";
 import ContributeSheet from "@/scanner/ContributeSheet";
 import RiskHud from "@/scanner/RiskHud";
 import CompareSheet from "@/scanner/CompareSheet";
@@ -54,6 +55,7 @@ export default function App() {
   const camera = useCamera(videoRef);
   const scanner = useBarcodeScanner(videoRef, camera.status === "streaming");
   const [keypadOpen, setKeypadOpen] = useState(false);
+  const [pluOpen, setPluOpen] = useState(false);
   const [contributeOpen, setContributeOpen] = useState(false);
   const [refreshToken, setRefreshToken] = useState(0);
   const lookup = useProductLookup(scanner.result?.text ?? null, refreshToken);
@@ -82,15 +84,15 @@ export default function App() {
   const worst = found
     ? Math.max(found.pesticide_score ?? 0, found.heavy_metal_score ?? 0)
     : 0;
+  // Default is the happy idle head (blink/wink). Only a found result nudges the
+  // mood to celebrate a clean pick or look concerned at a high score.
   const buddyMood: BuddyMood = found
     ? worst < 1.5
       ? "good"
       : worst >= 4
         ? "concern"
         : "idle"
-    : scanner.error
-      ? "concern"
-      : "searching";
+    : "idle";
 
   return (
     <div className="fixed inset-0 overflow-hidden bg-black text-white">
@@ -388,10 +390,19 @@ export default function App() {
               </button>
               <button
                 type="button"
-                onClick={() => setKeypadOpen(true)}
-                className="rounded-3xl bg-white/10 px-5 py-4 text-base font-semibold active:opacity-70"
+                onClick={() => setPluOpen(true)}
+                aria-label="Enter a PLU for loose produce"
+                className="shrink-0 rounded-3xl bg-white/10 px-4 py-4 text-2xl active:opacity-70"
               >
-                Enter code
+                🍎
+              </button>
+              <button
+                type="button"
+                onClick={() => setKeypadOpen(true)}
+                className="shrink-0 rounded-3xl bg-white/10 px-4 py-4 text-2xl active:opacity-70"
+                aria-label="Enter a barcode"
+              >
+                ⌨️
               </button>
             </div>
           )
@@ -421,6 +432,8 @@ export default function App() {
           onClose={() => setKeypadOpen(false)}
         />
       )}
+
+      {pluOpen && <PluEntry onClose={() => setPluOpen(false)} />}
 
       {contributeOpen && "gtin14" in lookup && (
         <ContributeSheet
