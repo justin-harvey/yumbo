@@ -34,41 +34,35 @@ export default function YumboBuddy({ mood }: { mood: BuddyMood }) {
     });
   }, []);
 
-  // Idle blink/wink loop (only when genuinely idle and not mid-reaction).
+  // Idle animation: a blink every 4s, and a wink every 60s (every 15th tick
+   // winks instead of blinking, so the two never collide). Default is happy.
   useEffect(() => {
-    if (mood !== "idle" || reacting) return;
+    if (mood !== "idle") {
+      setIdleFrame("happy");
+      return;
+    }
     let alive = true;
-    let outer: number;
-    const schedule = () => {
-      outer = window.setTimeout(
-        () => {
-          if (!alive) return;
-          const r = Math.random();
-          if (r < 0.25) {
-            setIdleFrame("wink");
-            window.setTimeout(() => alive && setIdleFrame("happy"), 480);
-          } else if (r < 0.75) {
-            setIdleFrame("blink");
-            window.setTimeout(() => alive && setIdleFrame("happy"), 150);
-          }
-          schedule();
-        },
-        2200 + Math.random() * 2600,
-      );
-    };
-    schedule();
+    let count = 0;
+    const revert = () => alive && setIdleFrame("happy");
+    const id = window.setInterval(() => {
+      count += 1;
+      if (count % 15 === 0) {
+        setIdleFrame("wink");
+        window.setTimeout(revert, 500);
+      } else {
+        setIdleFrame("blink");
+        window.setTimeout(revert, 150);
+      }
+    }, 4000);
     return () => {
       alive = false;
-      window.clearTimeout(outer);
+      window.clearInterval(id);
     };
-  }, [mood, reacting]);
+  }, [mood]);
 
-  // Auto-rotate tips.
+  // Auto-rotate tips every 15s (tapping the buddy also advances the tip).
   useEffect(() => {
-    const id = window.setInterval(
-      () => setTipIndex((i) => i + 1),
-      9000,
-    );
+    const id = window.setInterval(() => setTipIndex((i) => i + 1), 15000);
     return () => window.clearInterval(id);
   }, []);
 
