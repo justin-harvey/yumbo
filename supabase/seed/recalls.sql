@@ -4,6 +4,12 @@
 -- Paste AFTER the schema/commodity migrations.
 
 insert into contamination_findings (kind, analyte, commodity_id, reported_on, source_name, source_url, summary)
+select 'pathogen', 'Salmonella', c.id, '2026-08-06', 'FDA', 'https://api.fda.gov/food/enforcement.json?search=recall_number:%22H-1302-2026%22', '[Class I] Products were manufactured with jalapenos that have the potential to be contaminated with Salmonella'
+from commodities c where c.slug = 'bell_pepper'
+and not exists (select 1 from contamination_findings f
+  where f.source_url = 'https://api.fda.gov/food/enforcement.json?search=recall_number:%22H-1302-2026%22' and f.commodity_id = c.id);
+
+insert into contamination_findings (kind, analyte, commodity_id, reported_on, source_name, source_url, summary)
 select 'pathogen', 'Salmonella', c.id, '2026-08-05', 'FDA', 'https://api.fda.gov/food/enforcement.json?search=recall_number:%22H-1262-2026%22', '[Class I] Potential Salmonella Javiana contamination'
 from commodities c where c.slug = 'bell_pepper'
 and not exists (select 1 from contamination_findings f
@@ -356,9 +362,3 @@ select 'pathogen', 'Salmonella', c.id, '2026-04-23', 'FDA', 'https://api.fda.gov
 from commodities c where c.slug = 'onion'
 and not exists (select 1 from contamination_findings f
   where f.source_url = 'https://api.fda.gov/food/enforcement.json?search=recall_number:%22H-0830-2026%22' and f.commodity_id = c.id);
-
-insert into contamination_findings (kind, analyte, commodity_id, reported_on, source_name, source_url, summary)
-select 'pathogen', 'Salmonella', c.id, '2026-04-22', 'FDA', 'https://api.fda.gov/food/enforcement.json?search=recall_number:%22H-0816-2026%22', '[Class I] Product was made with milk powder recalled by the supplier due to Salmonella contamination.'
-from commodities c where c.slug = 'bell_pepper'
-and not exists (select 1 from contamination_findings f
-  where f.source_url = 'https://api.fda.gov/food/enforcement.json?search=recall_number:%22H-0816-2026%22' and f.commodity_id = c.id);
