@@ -4,6 +4,174 @@
 -- Paste AFTER the schema/commodity migrations.
 
 insert into contamination_findings (kind, analyte, commodity_id, reported_on, source_name, source_url, summary)
+select 'pathogen', 'Salmonella', c.id, '2026-09-11', 'FDA', 'https://api.fda.gov/food/enforcement.json?search=recall_number:%22H-1407-2026%22', '[Class I] Products contain alfalfa seed recalled by the supplier and may be contaminated with E. coli and/or Salmonella (downstream recall)'
+from commodities c where c.slug = 'broccoli'
+and not exists (select 1 from contamination_findings f
+  where f.source_url = 'https://api.fda.gov/food/enforcement.json?search=recall_number:%22H-1407-2026%22' and f.commodity_id = c.id);
+
+insert into contamination_findings (kind, analyte, commodity_id, reported_on, source_name, source_url, summary)
+select 'pathogen', 'Salmonella', c.id, '2026-09-11', 'FDA', 'https://api.fda.gov/food/enforcement.json?search=recall_number:%22H-1407-2026%22', '[Class I] Products contain alfalfa seed recalled by the supplier and may be contaminated with E. coli and/or Salmonella (downstream recall)'
+from commodities c where c.slug = 'cabbage'
+and not exists (select 1 from contamination_findings f
+  where f.source_url = 'https://api.fda.gov/food/enforcement.json?search=recall_number:%22H-1407-2026%22' and f.commodity_id = c.id);
+
+insert into contamination_findings (kind, analyte, commodity_id, reported_on, source_name, source_url, summary)
+select 'pathogen', 'Salmonella', c.id, '2026-09-11', 'FDA', 'https://api.fda.gov/food/enforcement.json?search=recall_number:%22H-1405-2026%22', '[Class I] Products contain alfalfa seed recalled by the supplier and may be contaminated with E. coli and/or Salmonella (downstream recall)'
+from commodities c where c.slug = 'broccoli'
+and not exists (select 1 from contamination_findings f
+  where f.source_url = 'https://api.fda.gov/food/enforcement.json?search=recall_number:%22H-1405-2026%22' and f.commodity_id = c.id);
+
+insert into contamination_findings (kind, analyte, commodity_id, reported_on, source_name, source_url, summary)
+select 'pathogen', 'Salmonella', c.id, '2026-09-11', 'FDA', 'https://api.fda.gov/food/enforcement.json?search=recall_number:%22H-1409-2026%22', '[Class I] Products contain alfalfa seed recalled by the supplier and may be contaminated with E. coli and/or Salmonella (downstream recall)'
+from commodities c where c.slug = 'broccoli'
+and not exists (select 1 from contamination_findings f
+  where f.source_url = 'https://api.fda.gov/food/enforcement.json?search=recall_number:%22H-1409-2026%22' and f.commodity_id = c.id);
+
+insert into contamination_findings (kind, analyte, commodity_id, reported_on, source_name, source_url, summary)
+select 'pathogen', 'Salmonella', c.id, '2026-09-11', 'FDA', 'https://api.fda.gov/food/enforcement.json?search=recall_number:%22H-1406-2026%22', '[Class I] Products contain alfalfa seed recalled by the supplier and may be contaminated with E. coli and/or Salmonella (downstream recall)'
+from commodities c where c.slug = 'broccoli'
+and not exists (select 1 from contamination_findings f
+  where f.source_url = 'https://api.fda.gov/food/enforcement.json?search=recall_number:%22H-1406-2026%22' and f.commodity_id = c.id);
+
+insert into contamination_findings (kind, analyte, commodity_id, reported_on, source_name, source_url, summary)
+select 'pathogen', 'Salmonella', c.id, '2026-09-04', 'FDA', 'https://api.fda.gov/food/enforcement.json?search=recall_number:%22H-1390-2026%22', '[Class I] Salmonella'
+from commodities c where c.slug = 'broccoli'
+and not exists (select 1 from contamination_findings f
+  where f.source_url = 'https://api.fda.gov/food/enforcement.json?search=recall_number:%22H-1390-2026%22' and f.commodity_id = c.id);
+
+insert into contamination_findings (kind, analyte, commodity_id, reported_on, source_name, source_url, summary)
+select 'pathogen', 'Salmonella', c.id, '2026-08-22', 'FDA', 'https://api.fda.gov/food/enforcement.json?search=recall_number:%22H-1339-2026%22', '[Class I] Sprouts may be contaminated with STEC E. coli and/or Salmonella.'
+from commodities c where c.slug = 'cabbage'
+and not exists (select 1 from contamination_findings f
+  where f.source_url = 'https://api.fda.gov/food/enforcement.json?search=recall_number:%22H-1339-2026%22' and f.commodity_id = c.id);
+
+insert into contamination_findings (kind, analyte, commodity_id, reported_on, source_name, source_url, summary)
+select 'pathogen', 'Salmonella', c.id, '2026-08-05', 'FDA', 'https://api.fda.gov/food/enforcement.json?search=recall_number:%22H-1379-2026%22', '[Class I] Jalapenos have the potential to be contaminated with Salmonella'
+from commodities c where c.slug = 'bell_pepper'
+and not exists (select 1 from contamination_findings f
+  where f.source_url = 'https://api.fda.gov/food/enforcement.json?search=recall_number:%22H-1379-2026%22' and f.commodity_id = c.id);
+
+insert into contamination_findings (kind, analyte, commodity_id, reported_on, source_name, source_url, summary)
+select 'pathogen', 'Salmonella', c.id, '2026-08-07', 'FDA', 'https://api.fda.gov/food/enforcement.json?search=recall_number:%22H-1355-2026%22', '[Class I] Potential contamination with Salmonella.'
+from commodities c where c.slug = 'onion'
+and not exists (select 1 from contamination_findings f
+  where f.source_url = 'https://api.fda.gov/food/enforcement.json?search=recall_number:%22H-1355-2026%22' and f.commodity_id = c.id);
+
+insert into contamination_findings (kind, analyte, commodity_id, reported_on, source_name, source_url, summary)
+select 'pathogen', 'Salmonella', c.id, '2026-08-07', 'FDA', 'https://api.fda.gov/food/enforcement.json?search=recall_number:%22H-1355-2026%22', '[Class I] Potential contamination with Salmonella.'
+from commodities c where c.slug = 'bell_pepper'
+and not exists (select 1 from contamination_findings f
+  where f.source_url = 'https://api.fda.gov/food/enforcement.json?search=recall_number:%22H-1355-2026%22' and f.commodity_id = c.id);
+
+insert into contamination_findings (kind, analyte, commodity_id, reported_on, source_name, source_url, summary)
+select 'pathogen', 'Salmonella', c.id, '2026-08-19', 'FDA', 'https://api.fda.gov/food/enforcement.json?search=recall_number:%22H-1342-2026%22', '[Class II] Product may be contaminated with Salmonella'
+from commodities c where c.slug = 'mango'
+and not exists (select 1 from contamination_findings f
+  where f.source_url = 'https://api.fda.gov/food/enforcement.json?search=recall_number:%22H-1342-2026%22' and f.commodity_id = c.id);
+
+insert into contamination_findings (kind, analyte, commodity_id, reported_on, source_name, source_url, summary)
+select 'pathogen', 'Salmonella', c.id, '2026-08-07', 'FDA', 'https://api.fda.gov/food/enforcement.json?search=recall_number:%22H-1356-2026%22', '[Class I] Potential contamination with Salmonella.'
+from commodities c where c.slug = 'onion'
+and not exists (select 1 from contamination_findings f
+  where f.source_url = 'https://api.fda.gov/food/enforcement.json?search=recall_number:%22H-1356-2026%22' and f.commodity_id = c.id);
+
+insert into contamination_findings (kind, analyte, commodity_id, reported_on, source_name, source_url, summary)
+select 'pathogen', 'Salmonella', c.id, '2026-08-07', 'FDA', 'https://api.fda.gov/food/enforcement.json?search=recall_number:%22H-1356-2026%22', '[Class I] Potential contamination with Salmonella.'
+from commodities c where c.slug = 'bell_pepper'
+and not exists (select 1 from contamination_findings f
+  where f.source_url = 'https://api.fda.gov/food/enforcement.json?search=recall_number:%22H-1356-2026%22' and f.commodity_id = c.id);
+
+insert into contamination_findings (kind, analyte, commodity_id, reported_on, source_name, source_url, summary)
+select 'pathogen', 'Salmonella', c.id, '2026-08-05', 'FDA', 'https://api.fda.gov/food/enforcement.json?search=recall_number:%22H-1376-2026%22', '[Class I] Jalapenos have the potential to be contaminated with Salmonella'
+from commodities c where c.slug = 'bell_pepper'
+and not exists (select 1 from contamination_findings f
+  where f.source_url = 'https://api.fda.gov/food/enforcement.json?search=recall_number:%22H-1376-2026%22' and f.commodity_id = c.id);
+
+insert into contamination_findings (kind, analyte, commodity_id, reported_on, source_name, source_url, summary)
+select 'pathogen', 'Salmonella', c.id, '2026-08-05', 'FDA', 'https://api.fda.gov/food/enforcement.json?search=recall_number:%22H-1376-2026%22', '[Class I] Jalapenos have the potential to be contaminated with Salmonella'
+from commodities c where c.slug = 'mushroom'
+and not exists (select 1 from contamination_findings f
+  where f.source_url = 'https://api.fda.gov/food/enforcement.json?search=recall_number:%22H-1376-2026%22' and f.commodity_id = c.id);
+
+insert into contamination_findings (kind, analyte, commodity_id, reported_on, source_name, source_url, summary)
+select 'pathogen', 'Salmonella', c.id, '2026-08-05', 'FDA', 'https://api.fda.gov/food/enforcement.json?search=recall_number:%22H-1377-2026%22', '[Class I] Jalapenos have the potential to be contaminated with Salmonella'
+from commodities c where c.slug = 'bell_pepper'
+and not exists (select 1 from contamination_findings f
+  where f.source_url = 'https://api.fda.gov/food/enforcement.json?search=recall_number:%22H-1377-2026%22' and f.commodity_id = c.id);
+
+insert into contamination_findings (kind, analyte, commodity_id, reported_on, source_name, source_url, summary)
+select 'pathogen', 'Salmonella', c.id, '2026-08-05', 'FDA', 'https://api.fda.gov/food/enforcement.json?search=recall_number:%22H-1372-2026%22', '[Class I] Jalapenos have the potential to be contaminated with Salmonella'
+from commodities c where c.slug = 'bell_pepper'
+and not exists (select 1 from contamination_findings f
+  where f.source_url = 'https://api.fda.gov/food/enforcement.json?search=recall_number:%22H-1372-2026%22' and f.commodity_id = c.id);
+
+insert into contamination_findings (kind, analyte, commodity_id, reported_on, source_name, source_url, summary)
+select 'pathogen', 'Salmonella', c.id, '2026-08-05', 'FDA', 'https://api.fda.gov/food/enforcement.json?search=recall_number:%22H-1374-2026%22', '[Class I] Jalapenos have the potential to be contaminated with Salmonella'
+from commodities c where c.slug = 'bell_pepper'
+and not exists (select 1 from contamination_findings f
+  where f.source_url = 'https://api.fda.gov/food/enforcement.json?search=recall_number:%22H-1374-2026%22' and f.commodity_id = c.id);
+
+insert into contamination_findings (kind, analyte, commodity_id, reported_on, source_name, source_url, summary)
+select 'pathogen', 'Salmonella', c.id, '2026-08-05', 'FDA', 'https://api.fda.gov/food/enforcement.json?search=recall_number:%22H-1374-2026%22', '[Class I] Jalapenos have the potential to be contaminated with Salmonella'
+from commodities c where c.slug = 'mango'
+and not exists (select 1 from contamination_findings f
+  where f.source_url = 'https://api.fda.gov/food/enforcement.json?search=recall_number:%22H-1374-2026%22' and f.commodity_id = c.id);
+
+insert into contamination_findings (kind, analyte, commodity_id, reported_on, source_name, source_url, summary)
+select 'pathogen', 'Salmonella', c.id, '2026-08-07', 'FDA', 'https://api.fda.gov/food/enforcement.json?search=recall_number:%22H-1366-2026%22', '[Class I] Potential contamination with Salmonella.'
+from commodities c where c.slug = 'onion'
+and not exists (select 1 from contamination_findings f
+  where f.source_url = 'https://api.fda.gov/food/enforcement.json?search=recall_number:%22H-1366-2026%22' and f.commodity_id = c.id);
+
+insert into contamination_findings (kind, analyte, commodity_id, reported_on, source_name, source_url, summary)
+select 'pathogen', 'Salmonella', c.id, '2026-08-07', 'FDA', 'https://api.fda.gov/food/enforcement.json?search=recall_number:%22H-1366-2026%22', '[Class I] Potential contamination with Salmonella.'
+from commodities c where c.slug = 'bell_pepper'
+and not exists (select 1 from contamination_findings f
+  where f.source_url = 'https://api.fda.gov/food/enforcement.json?search=recall_number:%22H-1366-2026%22' and f.commodity_id = c.id);
+
+insert into contamination_findings (kind, analyte, commodity_id, reported_on, source_name, source_url, summary)
+select 'pathogen', 'Salmonella', c.id, '2026-08-22', 'FDA', 'https://api.fda.gov/food/enforcement.json?search=recall_number:%22H-1338-2026%22', '[Class I] Sprouts may be contaminated with STEC E. coli and/or Salmonella.'
+from commodities c where c.slug = 'onion'
+and not exists (select 1 from contamination_findings f
+  where f.source_url = 'https://api.fda.gov/food/enforcement.json?search=recall_number:%22H-1338-2026%22' and f.commodity_id = c.id);
+
+insert into contamination_findings (kind, analyte, commodity_id, reported_on, source_name, source_url, summary)
+select 'pathogen', 'Salmonella', c.id, '2026-08-05', 'FDA', 'https://api.fda.gov/food/enforcement.json?search=recall_number:%22H-1375-2026%22', '[Class I] Jalapenos have the potential to be contaminated with Salmonella'
+from commodities c where c.slug = 'bell_pepper'
+and not exists (select 1 from contamination_findings f
+  where f.source_url = 'https://api.fda.gov/food/enforcement.json?search=recall_number:%22H-1375-2026%22' and f.commodity_id = c.id);
+
+insert into contamination_findings (kind, analyte, commodity_id, reported_on, source_name, source_url, summary)
+select 'pathogen', 'Salmonella', c.id, '2026-08-07', 'FDA', 'https://api.fda.gov/food/enforcement.json?search=recall_number:%22H-1344-2026%22', '[Class I] Potential contamination with Salmonella.'
+from commodities c where c.slug = 'bell_pepper'
+and not exists (select 1 from contamination_findings f
+  where f.source_url = 'https://api.fda.gov/food/enforcement.json?search=recall_number:%22H-1344-2026%22' and f.commodity_id = c.id);
+
+insert into contamination_findings (kind, analyte, commodity_id, reported_on, source_name, source_url, summary)
+select 'pathogen', 'E. coli', c.id, '2026-08-28', 'FDA', 'https://api.fda.gov/food/enforcement.json?search=recall_number:%22H-1380-2026%22', '[Class I] Potential E. coli O145:H28 Contamination'
+from commodities c where c.slug = 'strawberry'
+and not exists (select 1 from contamination_findings f
+  where f.source_url = 'https://api.fda.gov/food/enforcement.json?search=recall_number:%22H-1380-2026%22' and f.commodity_id = c.id);
+
+insert into contamination_findings (kind, analyte, commodity_id, reported_on, source_name, source_url, summary)
+select 'pathogen', 'E. coli', c.id, '2026-08-28', 'FDA', 'https://api.fda.gov/food/enforcement.json?search=recall_number:%22H-1380-2026%22', '[Class I] Potential E. coli O145:H28 Contamination'
+from commodities c where c.slug = 'blueberry'
+and not exists (select 1 from contamination_findings f
+  where f.source_url = 'https://api.fda.gov/food/enforcement.json?search=recall_number:%22H-1380-2026%22' and f.commodity_id = c.id);
+
+insert into contamination_findings (kind, analyte, commodity_id, reported_on, source_name, source_url, summary)
+select 'pathogen', 'E. coli', c.id, '2026-08-28', 'FDA', 'https://api.fda.gov/food/enforcement.json?search=recall_number:%22H-1380-2026%22', '[Class I] Potential E. coli O145:H28 Contamination'
+from commodities c where c.slug = 'blackberry'
+and not exists (select 1 from contamination_findings f
+  where f.source_url = 'https://api.fda.gov/food/enforcement.json?search=recall_number:%22H-1380-2026%22' and f.commodity_id = c.id);
+
+insert into contamination_findings (kind, analyte, commodity_id, reported_on, source_name, source_url, summary)
+select 'pathogen', 'Salmonella', c.id, '2026-08-06', 'FDA', 'https://api.fda.gov/food/enforcement.json?search=recall_number:%22H-1302-2026%22', '[Class I] Products were manufactured with jalapenos that have the potential to be contaminated with Salmonella'
+from commodities c where c.slug = 'bell_pepper'
+and not exists (select 1 from contamination_findings f
+  where f.source_url = 'https://api.fda.gov/food/enforcement.json?search=recall_number:%22H-1302-2026%22' and f.commodity_id = c.id);
+
+insert into contamination_findings (kind, analyte, commodity_id, reported_on, source_name, source_url, summary)
 select 'pathogen', 'Salmonella', c.id, '2026-08-05', 'FDA', 'https://api.fda.gov/food/enforcement.json?search=recall_number:%22H-1262-2026%22', '[Class I] Potential Salmonella Javiana contamination'
 from commodities c where c.slug = 'bell_pepper'
 and not exists (select 1 from contamination_findings f
@@ -326,39 +494,3 @@ select 'pathogen', 'Salmonella', c.id, '2026-05-01', 'FDA', 'https://api.fda.gov
 from commodities c where c.slug = 'onion'
 and not exists (select 1 from contamination_findings f
   where f.source_url = 'https://api.fda.gov/food/enforcement.json?search=recall_number:%22H-0887-2026%22' and f.commodity_id = c.id);
-
-insert into contamination_findings (kind, analyte, commodity_id, reported_on, source_name, source_url, summary)
-select 'pathogen', 'Salmonella', c.id, '2026-05-01', 'FDA', 'https://api.fda.gov/food/enforcement.json?search=recall_number:%22H-0886-2026%22', '[Class I] Products may be potentially contaminated with Salmonella.'
-from commodities c where c.slug = 'onion'
-and not exists (select 1 from contamination_findings f
-  where f.source_url = 'https://api.fda.gov/food/enforcement.json?search=recall_number:%22H-0886-2026%22' and f.commodity_id = c.id);
-
-insert into contamination_findings (kind, analyte, commodity_id, reported_on, source_name, source_url, summary)
-select 'pathogen', 'Listeria monocytogenes', c.id, '2026-05-14', 'FDA', 'https://api.fda.gov/food/enforcement.json?search=recall_number:%22H-0898-2026%22', '[Class I] Imported Enoki Mushrooms samples collected by Florida Department of Health tested positive for Listeria Monocytogenes.'
-from commodities c where c.slug = 'mushroom'
-and not exists (select 1 from contamination_findings f
-  where f.source_url = 'https://api.fda.gov/food/enforcement.json?search=recall_number:%22H-0898-2026%22' and f.commodity_id = c.id);
-
-insert into contamination_findings (kind, analyte, commodity_id, reported_on, source_name, source_url, summary)
-select 'pathogen', 'Salmonella', c.id, '2026-04-22', 'FDA', 'https://api.fda.gov/food/enforcement.json?search=recall_number:%22H-0814-2026%22', '[Class I] Product was made with milk powder recalled by the supplier due to Salmonella contamination.'
-from commodities c where c.slug = 'onion'
-and not exists (select 1 from contamination_findings f
-  where f.source_url = 'https://api.fda.gov/food/enforcement.json?search=recall_number:%22H-0814-2026%22' and f.commodity_id = c.id);
-
-insert into contamination_findings (kind, analyte, commodity_id, reported_on, source_name, source_url, summary)
-select 'pathogen', 'Salmonella', c.id, '2026-04-22', 'FDA', 'https://api.fda.gov/food/enforcement.json?search=recall_number:%22H-0812-2026%22', '[Class I] Product was made with milk powder recalled by the supplier due to Salmonella contamination.'
-from commodities c where c.slug = 'mushroom'
-and not exists (select 1 from contamination_findings f
-  where f.source_url = 'https://api.fda.gov/food/enforcement.json?search=recall_number:%22H-0812-2026%22' and f.commodity_id = c.id);
-
-insert into contamination_findings (kind, analyte, commodity_id, reported_on, source_name, source_url, summary)
-select 'pathogen', 'Salmonella', c.id, '2026-04-23', 'FDA', 'https://api.fda.gov/food/enforcement.json?search=recall_number:%22H-0830-2026%22', '[Class I] Seasoning was made with recalled California Dairies milk powder due to Salmonella contamination.'
-from commodities c where c.slug = 'onion'
-and not exists (select 1 from contamination_findings f
-  where f.source_url = 'https://api.fda.gov/food/enforcement.json?search=recall_number:%22H-0830-2026%22' and f.commodity_id = c.id);
-
-insert into contamination_findings (kind, analyte, commodity_id, reported_on, source_name, source_url, summary)
-select 'pathogen', 'Salmonella', c.id, '2026-04-22', 'FDA', 'https://api.fda.gov/food/enforcement.json?search=recall_number:%22H-0816-2026%22', '[Class I] Product was made with milk powder recalled by the supplier due to Salmonella contamination.'
-from commodities c where c.slug = 'bell_pepper'
-and not exists (select 1 from contamination_findings f
-  where f.source_url = 'https://api.fda.gov/food/enforcement.json?search=recall_number:%22H-0816-2026%22' and f.commodity_id = c.id);
